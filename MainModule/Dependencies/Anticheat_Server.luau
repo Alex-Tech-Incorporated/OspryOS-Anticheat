@@ -43,7 +43,7 @@ return function (OspryAC)
 	--// Creates a Coroutine
 	function Server:CreateCoroutine(Name : string, func)
 		if Server.Coroutines[Name] then
-			OspryAC:print(`The Coroutine "{Name}" already exists, the existing Coroutine has been overwritten.`)
+			OspryAC:warn(`The Coroutine "{Name}" already exists, the existing Coroutine has been overwritten.`)
 		end
 		
 		--// Create and Resume Coroutine
@@ -53,6 +53,7 @@ return function (OspryAC)
 		--// Check if Coroutine failed
 		if not success then
 			OspryAC:warn(`Failed to create Coroutine "{Name}", got: {result}`)
+			return nil
 		end
 
 		--// Add to Table
@@ -158,7 +159,7 @@ return function (OspryAC)
 					if Settings.ServerSide.HumanoidChecks then
 						Humanoid.StateChanged:Connect(function(Prev_State, New_State)
 							--// locals
-							local isWhitelistedState = table.find(
+							local isWhitelistedState = table.find( -- This just searches the WhitelistedStates table for the Value, returns true or false.
 								Data.HumanoidChecks.WhitelistedStates,
 								New_State.Value
 							)
@@ -183,17 +184,38 @@ return function (OspryAC)
 					--// MagnitudeChecks Coroutine
 					if Settings.ServerSide.MagnitudeChecks then
 						--// Create Coroutine
-						Server:CreateCoroutine("MagnitudeCheck", function()
+						Server:CreateCoroutine("MagnitudeCheck_"..Plr.UserId, function()
 							while task.wait(Data.MagnitudeChecks.CheckTime) do
 								CheckMagnitude()
 							end
 						end)
 					end
+				end)
+				
+				--// Cleanup if the Character gets Respawned / Removed
+				Plr.CharacterRemoving:Connect(function(Char : Model)
+					OspryAC:debug(`Character removing, {Plr.Name}`)
+					
+					--// Disconnect Threads
+					for Name, Thread in pairs(Server.Coroutines) do
+						if Name:match(Plr.UserId) then
+							OspryAC:debug(Name, Thread)
+							
+							--// Cancel / Remove thread
+							task.cancel(Thread)
+							Server.Coroutines[Name] = nil
+							
+							OspryAC:debug(`Thread "{Name}" cancelled for {Char.Name}`)
+						end
+					end
 					
 					--// Complete
-					OspryAC:print(`Server-Sided Anticheat initialized.`)
+					OspryAC:debug(`Cleanup completed, {Char:GetFullName()}`)
 				end)
 			end)
+			
+			--// Complete
+			OspryAC:print(`Server-Sided Anticheat initialized.`)
 		end,
 	}
 end
