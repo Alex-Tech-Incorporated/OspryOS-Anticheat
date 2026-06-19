@@ -59,7 +59,7 @@ return function (OspryAC)
 					return Request:Close(ClientData)
 					
 				else
-					OspryAC:warn(`Calls has recieved an invalid datatype from the Client of @{Plr.Name}.`)
+					OspryAC:warn(`Calls has recieved an invalid datatype from the Client of {Plr.Name}.`)
 					return Request:Raise("The Server recieved an invalid datatype.")
 				end
 			end)
@@ -71,10 +71,11 @@ return function (OspryAC)
 				local Token = OspryAC.tokens.GetToken(Plr)
 				
 				local StrictTokens = OspryAC.Config.Behavior.Strict_Tokens
-				local Called_Tokens = table.find(OspryAC.Data.System.Called_Tokens, Plr.UserId)
+				local called_Tokens = OspryAC.Data.System.Called_Tokens
+				local TokenWasCalled = table.find(OspryAC.Data.System.Called_Tokens, Plr.UserId)
 				
 				--// Check if Token was already called
-				if StrictTokens and Called_Tokens then
+				if StrictTokens and TokenWasCalled then
 					--// Kick Player
 					OspryAC.functions.Kick(
 						Plr,
@@ -84,7 +85,7 @@ return function (OspryAC)
 					
 				else
 					--// Export and add to Called_Tokens
-					if StrictTokens then table.insert(Called_Tokens, Plr.UserId)end
+					if StrictTokens then table.insert(called_Tokens, Plr.UserId) end
 					return Request:Close(Token)
 				end
 			end)
