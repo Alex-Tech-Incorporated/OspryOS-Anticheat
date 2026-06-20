@@ -6,9 +6,12 @@ Please check the [Official Setup Guide](https://github.com/Alex-Tech-Incorporate
 
 # Credits
 ## Contributors
-[![contributors](https://contributors-img.web.app/image?repo=Alex-Tech-Incorporated/OspryOS-Anticheat)](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/graphs/contributors)
+<a href="https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Alex-Tech-Incorporated/OspryOS-Anticheat" />
+</a>
 
 ## External Sources
-This section covers external Models or code used by the Anticheat, please show support to its Creators!
+This section covers external Models, code or Tools used by the Anticheat or in its Repo, show these people some love!
 - [@Evercyan](https://gist.github.com/EvercyanRBX) for his [Remotes](https://devforum.roblox.com/t/remotes-%E2%80%94-natural-type-checking-debounce-and-more/3379709) Module
-- [@rinq](https://www.roblox.com/users/177766193/profile) for his [Dex and AWP Detection](https://devforum.roblox.com/t/awp-injection-detection-hook-detection-infinite-yield-detection-dex-explorer-detection/3560554) methoods
+- [@rinq](https://www.roblox.com/users/177766193/profile) for his [Dex and AWP Detection](https://devforum.roblox.com/t/awp-injection-detection-hook-detection-infinite-yield-detection-dex-explorer-detection/3560554) methods
+- [contrib.rocks](https://contrib.rocks/) for the Contributors part within [README](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/blob/main/README.md)
