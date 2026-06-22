@@ -73,13 +73,6 @@ return function (OspryAC)
 	
 	--// Fires the .Warn() function within functions
 	function Server:Warn(Plr : Player, Reason : string, ModMessage : string)
-		--// Check if Warnings are enabled
-		if not Settings.Behavior.Warnings then
-			Server:Kick(Plr, Reason, ModMessage)
-			return
-		end
-		
-		--// Issue Warn
 		functions.Warn(
 			Plr,
 			Reason,
@@ -98,14 +91,14 @@ return function (OspryAC)
 					OspryAC:debug(`Character added, {Plr.Name}`)
 					
 					--// locals
-					local Humanoid = Char:WaitForChild("Humanoid") :: Humanoid
-					local RootPart = Char:WaitForChild("HumanoidRootPart")
+					local Humanoid = Char:WaitForChild("Humanoid", 120) :: Humanoid
+					local RootPart = Char:WaitForChild("HumanoidRootPart", 120)
 					
 					
 					
 					--// Magnitude Check
 					local function CheckMagnitude()
-						if not Settings.MagnitudeChecks then return end
+						if not Settings.ServerSide.MagnitudeChecks then return end
 						
 						--// Check for RootPart
 						if not RootPart then
@@ -125,23 +118,20 @@ return function (OspryAC)
 						task.delay(Data.MagnitudeChecks.CheckDelay, function()
 							--// locals
 							local Current_Position = RootPart.Position
-							local HumanoidState = Humanoid:GetState()
+							local New_Humanoid_State = Humanoid:GetState()
 							
 							--// Check for Rapid Magnitude changes
 							if (Current_Position - Prev_Position).Magnitude >= Data.MagnitudeChecks.Max_Magnitude then
-								--// Check Whitelisted States
+								--// Compare Whitelisted States with New and Previous State
 								local isWhitelistedState = table.find(
 									Data.HumanoidChecks.WhitelistedStates,
-									HumanoidState.Value
+									New_Humanoid_State.Value
 								)
-								--[[
 								local isPreviousState = table.find(
 									Data.HumanoidChecks.WhitelistedStates,
 									Prev_Humanoid_State.Value
 								)
 								if isWhitelistedState or isPreviousState then return end
-								]] -- Removed due to issues related to Detection, since the previous Value will (most likely) always be Whitelisted.
-								if isWhitelistedState then return end
 								
 								--// Ignore if the Player is not in the Air or if the Player died / resetted
 								if Humanoid.FloorMaterial ~= Enum.Material.Air or Humanoid.Health == 0 then return end
@@ -201,7 +191,7 @@ return function (OspryAC)
 					
 					--// Disconnect Threads
 					for Name, Thread in pairs(Server.Coroutines) do
-						if Name:match(Plr.UserId) then
+						if Name:match(Plr.UserId) and typeof(Thread) == "thread" then
 							OspryAC:debug(Name, Thread)
 							
 							--// Cancel / Remove thread

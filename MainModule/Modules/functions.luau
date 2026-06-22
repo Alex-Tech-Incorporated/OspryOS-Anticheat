@@ -214,7 +214,15 @@ return function (OspryAC)
 		
 		--// Issues a Warning to a Player
 		Warn = function(Plr : Player, Reason : string, ModMessage : string)
-			if not OspryAC.Config.Behavior.Warnings then return end
+			if not OspryAC.Config.Behavior.Warnings then
+				--// Kick Player
+				OspryAC.functions.Kick(
+					Plr,
+					Reason,
+					ModMessage
+				)
+				return
+			end
 			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)

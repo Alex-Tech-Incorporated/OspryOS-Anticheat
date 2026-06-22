@@ -165,13 +165,9 @@ if Client.Config.GuiDetection then
 					if table.find(Client.Data.WhitelistedGuis, v.Name) then
 						-- Do nothing since its whitelisted
 					else
-						-- We know something shouldnt be there
-						if Client.Config.IssueWarns then
-							v:Destroy() -- Deletes the Detected Gui
-							Client:Warn("Unidentified Gui detected", "Player had a Gui called '"..v.Name.."' inserted into their PlayerGui.")
-						else
-							Client:Kick("Unidentified Gui detected", "Player had a Gui called '"..v.Name.."' inserted into their PlayerGui.")
-						end
+						--// Destroy Gui and Warn Player (or kick, depending on Settings)
+						v:Destroy() -- Deletes the Detected Gui
+						Client:Warn("Unidentified Gui detected", "Player had a Gui called '"..v.Name.."' inserted into their PlayerGui.")
 					end
 				end
 			end
