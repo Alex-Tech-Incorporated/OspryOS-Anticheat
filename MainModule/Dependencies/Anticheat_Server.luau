@@ -134,11 +134,14 @@ return function (OspryAC)
 									Data.HumanoidChecks.WhitelistedStates,
 									HumanoidState.Value
 								)
+								--[[
 								local isPreviousState = table.find(
 									Data.HumanoidChecks.WhitelistedStates,
 									Prev_Humanoid_State.Value
 								)
 								if isWhitelistedState or isPreviousState then return end
+								]] -- Removed due to issues related to Detection, since the previous Value will (most likely) always be Whitelisted.
+								if isWhitelistedState then return end
 								
 								--// Ignore if the Player is not in the Air or if the Player died / resetted
 								if Humanoid.FloorMaterial ~= Enum.Material.Air or Humanoid.Health == 0 then return end
