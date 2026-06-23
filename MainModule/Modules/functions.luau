@@ -84,11 +84,31 @@ return function (OspryAC)
 				
 				--// locals
 				local Token = OspryAC.tokens.GetToken(Plr)
+				local Called_Tokens = OspryAC.Data.System.Called_Tokens
+				
+				local hasCalledToken = table.find(
+					Called_Tokens,
+					Plr.UserId
+				)
 				
 				--// Clear Token if present
 				if Token then
 					OspryAC.Data.System.Tokens[Plr.UserId] = nil
+					
+					--// Check if Strict Tokens is active, and clear User from Table
+					if hasCalledToken then
+						for i, v in pairs(Called_Tokens) do
+							if v == Plr.UserId then
+								table.remove(Called_Tokens, i)
+								break
+							end
+						end
+					end
 				end
+				OspryAC:debug(OspryAC.Data.System)
+				
+				--// Cleanup Complete
+				OspryAC:debug(`Cleanup completetd, {Plr.Name}`)
 			end)
 			
 			OspryAC:debug("functions initialized.")

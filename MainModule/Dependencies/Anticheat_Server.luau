@@ -203,7 +203,7 @@ return function (OspryAC)
 					end
 					
 					--// Complete
-					OspryAC:debug(`Cleanup completed, {Char:GetFullName()}`)
+					OspryAC:debug(`Character cleanup completed, {Char:GetFullName()}`)
 				end)
 			end)
 			
