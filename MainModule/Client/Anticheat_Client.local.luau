@@ -37,9 +37,6 @@ local Client = {
 		DexDetection = false,
 		AWPDetection = false,
 		
-		--// Behavior
-		IssueWarns = false,
-		
 		--// Development
 		DebugMode = false,
 	},
