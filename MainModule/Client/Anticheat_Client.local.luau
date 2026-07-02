@@ -58,11 +58,34 @@ local Client = {
 
 -- Internal functions --
 
+--// Makes a Request for Data from the get_Config RemoteFunction
+local function Request(Remote, DataType : string) -- Not sure how I am going to TypeCheck this... -Alex
+	--// pcall
+	local success, result = pcall(function()
+		return Remote:InvokeServer(DataType)
+	end)
+	
+	--// Check Response
+	if result.Success then
+		return result.Data
+		
+	else
+		--// Kick Player
+		Plr:Kick(
+			"[OspryOS Anticheat]"
+			.."\nThe Client has gotten an Exception while trying to Request Data."
+			..`\n{result.Exception}`
+		)
+	end
+end
+
 --// Configures the Anticheat's Client
 local function Configure()
 	--// locals
-	local serverConfig = Client.Mappings.Config:InvokeServer("config").Data
-	local serverData = Client.Mappings.Config:InvokeServer("data").Data
+	-- local serverConfig = Client.Mappings.Config:InvokeServer("config").Data
+	-- local serverData = Client.Mappings.Config:InvokeServer("data").Data
+	local serverConfig = Request(Client.Mappings.Config, "config")
+	local serverData = Request(Client.Mappings.Config, "data")
 	
 	--// Configure
 	for key, value in pairs(serverConfig) do
@@ -178,45 +201,47 @@ if Client.Config.BtoolsDetection then
 	local Flagged = false
 
 	coroutine.wrap(function()
-		Plr.CharacterAdded:Wait()
-		Client:debug("Character loaded, starting Btools routine")	
+		Plr.CharacterAdded:Connect(function(Char : Model)
+			Client:debug("Character loaded, starting Btools routine")
+			
+			--// Detection loop
+			while true do
+				task.wait()
 
-		while true do
-			task.wait()
-
-			if Flagged then -- Since break cannot be used in the coroutines below, we instead call the kick like this so we can exit the loop without flooding the remote
-				Client:Kick("Btools detected", "Player has attempted to use Btools")
-				break
-			end
-
-			coroutine.wrap(function()  
-				--// locals
-				local Backpack = Plr:WaitForChild("Backpack")
-				
-				-- Checking for the name first, then we check if its actually Building Tools by looking for certain components within the tool
-				if Backpack:FindFirstChild("Building Tools") ~= nil then
-					if Backpack:FindFirstChild("Building Tools"):FindFirstChild("Interfaces"):FindFirstChild("BTAnchorToolGUI") then
-						Flagged = true
-					end
+				if Flagged then -- Since break cannot be used in the coroutines below, we instead call the kick like this so we can exit the loop without flooding the remote
+					Client:Kick("Btools detected", "Player has attempted to use Btools")
+					break
 				end
-			end)()
 
-			coroutine.wrap(function()  
-				-- Checking if the player exists so we can evaluate safely
-				if Plr.Character == nil then
-					Client:Debug("Character does not exist, skipping character check due to no character to check")	
-				else
-					-- To be extra safe, check for btools in a pcall so the thread does not clog-up due to errors
-					pcall(function()
-						if Plr.Character:FindFirstChildOfClass("Tool") ~= nil then
-							if Plr.Character:FindFirstChildOfClass("Tool").Interfaces.BTAnchorToolGUI ~= nil then
-								Flagged = true
-							end
+				coroutine.wrap(function()  
+					--// locals
+					local Backpack = Plr:WaitForChild("Backpack")
+
+					-- Checking for the name first, then we check if its actually Building Tools by looking for certain components within the tool
+					if Backpack:FindFirstChild("Building Tools") ~= nil then
+						if Backpack:FindFirstChild("Building Tools"):FindFirstChild("Interfaces"):FindFirstChild("BTAnchorToolGUI") then
+							Flagged = true
 						end
-					end)
-				end
-			end)()
-		end
+					end
+				end)()
+
+				coroutine.wrap(function()  
+					-- Checking if the player exists so we can evaluate safely
+					if Plr.Character == nil then
+						Client:Debug("Character does not exist, skipping character check due to no character to check")	
+					else
+						-- To be extra safe, check for btools in a pcall so the thread does not clog-up due to errors
+						pcall(function()
+							if Plr.Character:FindFirstChildOfClass("Tool") ~= nil then
+								if Plr.Character:FindFirstChildOfClass("Tool").Interfaces.BTAnchorToolGUI ~= nil then
+									Flagged = true
+								end
+							end
+						end)
+					end
+				end)()
+			end
+		end)
 	end)()
 end
 

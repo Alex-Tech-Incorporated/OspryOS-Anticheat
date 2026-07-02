@@ -6,9 +6,20 @@ local Players = game:GetService("Players")
 local RS = game:GetService("ReplicatedStorage")
 local TS = game:GetService("TweenService")
 
+--// ReplicatedStorage
+local RemotesModule
+local Remotes
+
+--// RemoteEvents
+local GuiSystem
+
 --// Player
 local Plr = Players.LocalPlayer
 local PlayerGui = script.Parent
+
+--// Guis
+local KickAnnounce
+local WarnGui
 
 --// System Table
 local GuiClient = {
@@ -29,30 +40,45 @@ end
 
 
 
--- Initialize --
-GuiClient:print("Initializing...")
+-- Client functions --
 
---// ReplicatedStorage
-local RemotesModule = RS:WaitForChild("OspryAC_Remotes", 120)
-if not RemotesModule then
-	GuiClient:warn("Failed to fetch Anticheat Remotes, waited 120 seconds.")
-	return
-end
-
---// Remotes
-local Remotes = require(RemotesModule)
-local GuiSystem = Remotes("GuiSystem")
-
---// Guis
-local KickAnnounce = PlayerGui:WaitForChild("__OspryAC_KickAnnounce", 5)
-local WarnGui = PlayerGui:WaitForChild("__OsprAC_WarnGui", 5)
-if not KickAnnounce and not WarnGui then
-	GuiClient:print("No Guis found, initialization aborted.")
+--// Initializes the Gui-Client
+function GuiClient:Init()
+	GuiClient:print("Initializing...")
 	
-	--// Cancel
-	script:Destroy()
-	return
+	--// Get OspryAC Remotes
+	RemotesModule = RS:WaitForChild("OspryAC_Remotes", 120)
+	if not RemotesModule then
+		GuiClient:warn("Failed to fetch Anticheat Remotes, waited 120 seconds.")
+		return
+	end
+	
+	--// Require Remotes and Set locals
+	Remotes = require(RemotesModule)
+	GuiSystem = Remotes("GuiSystem")
+	
+	--// Get Guis
+	KickAnnounce = PlayerGui:WaitForChild("__OspryAC_KickAnnounce", 5)
+	WarnGui = PlayerGui:WaitForChild("__OsprAC_WarnGui", 5)
+	if not KickAnnounce and not WarnGui then
+		GuiClient:print("No Guis found, initialization aborted.")
+
+		--// Cancel
+		script:Destroy()
+		return
+	end
+	
+	--// Parent to PlayerScripts
+	script.Parent = Plr:WaitForChild("PlayerScripts")
+	
+	--// Complete
+	GuiClient:print(`Initialized.`)
 end
+
+
+
+-- On Startup --
+GuiClient:Init()
 
 
 
@@ -186,8 +212,3 @@ GuiSystem:OnClientEvent(function(Request, GuiType : string, Reason : string, Plr
 		DisplayKickAnnounce(Plr, Reason)
 	end
 end)
-
-
-
---// Complete
-GuiClient:print(`Initialized.`)
