@@ -5,8 +5,6 @@ return {
 	},
 
 	ClientSide = {
-		Enabled = true,
-
 		NoclipDetection = true,
 		BtoolsDetection = true,
 		GuiDetection = false,
@@ -41,6 +39,6 @@ return {
 	
 	--// Anticheat specific
 	System = {
-		Version = "3.0.0",
+		Version = "3.1.0",
 	}
 }

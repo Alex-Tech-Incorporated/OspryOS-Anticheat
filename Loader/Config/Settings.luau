@@ -7,8 +7,6 @@ return {
 	
 	--// Client-Sided Detections
 	ClientSide = {
-		Enabled = true, -- Allows the use of the Client Anticheat
-		
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled
 		BtoolsDetection = true, -- Attempts to detect Btools in the Player's Backpack and Character
 		GuiDetection = false, -- (NOT RECOMMENDED) Attempts to detected unauthroized Guis and Scripts by checking if the object is also in StarterGui
@@ -20,13 +18,13 @@ return {
 	
 	--// Anticheat Behavior
 	Behavior = {
-		ShowKickReason = true, -- Shows the Kick reason to the Exploiter and Players if AnnounceKicks is enabled
-		AnnounceKicks = true, -- Announces if a Player was kicked to everyone in the Server
+		ShowKickReason = false, -- Shows the Kick reason to the Exploiter and Players if AnnounceKicks is enabled
+		AnnounceKicks = false, -- Announces if a Player was kicked to everyone in the Server
 		
 		Warnings = true, -- Makes the Anticheat issue warnings instead of kicking a Player directly for certian Detections
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
-		Strict_Tokens = false, -- Causes the get_Token RemoteFunction to only be able to be called once
+		Strict_Tokens = false, -- If enabled, Tokens can only be called once by the Client
 		
 		SendToWebhook = false, -- Sends Kicks and Warnings to a Webhook
 		Webhook_URL = "CHANGE_THIS", -- Your Webhook URL
