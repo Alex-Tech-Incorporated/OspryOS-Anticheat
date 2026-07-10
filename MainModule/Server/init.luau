@@ -74,10 +74,6 @@ end
 
 
 
--- Internal functions --
-
-
-
 -- Server functions --
 
 --// Configures the Anticheat's Settings and Data
@@ -93,7 +89,7 @@ function OspryOS_Anticheat:Configure(Settings : typeof(OspryOS_Anticheat.Config)
 	end
 	
 	--// Complete
-	OspryOS_Anticheat:debug("Configured.")
+	OspryOS_Anticheat:debug("Anticheat Configured.")
 end
 
 --// Starts the Anticheat's Initializations process
@@ -107,13 +103,19 @@ function OspryOS_Anticheat:Initialize()
 	OspryOS_Anticheat:print("Initializing...")
 	_G.OspryOS_Anticheat_MUTEX = true
 	
-	--// Clone Remotes to ReplicatedStorage
+	--// Clone Remotes and Client to ReplicatedStorage
 	coroutine.wrap(function()
+		--// Clone Remotes
 		local Remotes = Dependencies.Remotes:Clone()
 		Remotes.Name = "OspryAC_Remotes"
 		Remotes.Parent = game:GetService("ReplicatedStorage")
 		OspryOS_Anticheat.Remotes = Remotes
 		OspryOS_Anticheat:debug("Remotes cloned, running at:", Remotes:GetFullName())
+		
+		--// Clone Client
+		local AC_Client = Client.AC_Client:Clone()
+		AC_Client.Parent = game:GetService("ReplicatedStorage")
+		OspryOS_Anticheat:debug(`Client cloned, running at:`, AC_Client:GetFullName())
 	end)()
 	
 	--// Initialize Modules

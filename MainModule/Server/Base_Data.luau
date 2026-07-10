@@ -24,6 +24,7 @@ return {
 	--// Anticheat specific
 	System = {
 		Tokens = {}, -- Format: [UserId] = Token
+		Client_Stats = {}, -- Format: [UserId] = ClientState | "Loading" or "Complete"
 		Called_Tokens = {}, -- Stores all Players that already called there Token
 		
 		Warnings = {}, -- Format: [UserId] = WarningCount

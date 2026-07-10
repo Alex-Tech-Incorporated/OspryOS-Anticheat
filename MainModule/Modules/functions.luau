@@ -20,7 +20,7 @@ return function (OspryAC)
 				--// locals
 				local PlayerGui = Plr:WaitForChild("PlayerGui")
 				
-				local GuiClient = OspryAC.Client.Guis:WaitForChild("Gui_Client") :: LocalScript
+				-- // Gui Data
 				local GuiData = {
 					--// KickAnnounce Gui Data
 					KickAnnounce = {
@@ -37,27 +37,6 @@ return function (OspryAC)
 					},
 				}
 				
-				--// Clone Client to Player
-				if OspryAC.Config.ClientSide.Enabled then
-					--// Clone Client Module and Generate Token
-					task.spawn(function()
-						--// locals
-						local ClientBase = OspryAC.Client:WaitForChild("Anticheat_Client")
-						local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
-						if isWhitelisted then OspryAC:debug(`{Plr.Name} is Whitelisted, Client initialization skipped.`) return end
-						
-						--// Clone Module
-						local ClientModule = ClientBase:Clone()
-						
-						--// Generate Token
-						OspryAC.tokens.GenerateToken(Plr)
-
-						--// Insert and Enable
-						ClientModule.Parent = PlayerGui -- Why is there no way to put this into PlayerScripts?
-						ClientModule.Enabled = true
-					end)
-				end
-				
 				--// Clone Guis into PlayerGui
 				for Gui, Data in pairs(GuiData) do
 					if not Data.Enabled then continue end
@@ -70,12 +49,6 @@ return function (OspryAC)
 					--// Complete
 					OspryAC:debug(`Cloned "{Clone.Name}" into`, PlayerGui:GetFullName())
 				end
-				
-				--// Clone and Insert Gui Client
-				local OspryAC_GuiClient = GuiClient:Clone()
-				OspryAC_GuiClient.Name = "__OspryAC_Gui_Client"
-				OspryAC_GuiClient.Enabled = true
-				OspryAC_GuiClient.Parent = PlayerGui
 			end)
 			
 			--// Connection for the Anticheat to cleanup Player Data as soon as the Player leaves
@@ -83,7 +56,7 @@ return function (OspryAC)
 				OspryAC:debug("Player leaving,", Plr.Name)
 				
 				--// locals
-				local Token = OspryAC.tokens.GetToken(Plr)
+				local Token = OspryAC.tokens.Get(Plr)
 				local Called_Tokens = OspryAC.Data.System.Called_Tokens
 				
 				local hasCalledToken = table.find(
@@ -91,10 +64,12 @@ return function (OspryAC)
 					Plr.UserId
 				)
 				
+				--// Clear Data Tables
+				OspryAC.Data.System.Client_Stats[Plr.UserId] = nil
+				OspryAC.Data.System.Tokens[Plr.UserId] = nil
+				
 				--// Clear Token if present
 				if Token then
-					OspryAC.Data.System.Tokens[Plr.UserId] = nil
-					
 					--// Check if Strict Tokens is active, and clear User from Table
 					if hasCalledToken then
 						for i, v in pairs(Called_Tokens) do
@@ -170,13 +145,9 @@ return function (OspryAC)
 		AnnounceToClients = function(KickedPlr : Player, Reason : string)
 			if not OspryAC.Config.Behavior.AnnounceKicks then return end
 			
-			--// locals
-			local Remotes = require(OspryAC.Remotes)
-			local GuiRemote = Remotes("GuiSystem")
-			
 			--// Send to Clients
-			GuiRemote:FireAllClients(
-				"Announce",
+			OspryAC.calls.SendAll(
+				"DisplayGui", "Announce",
 				if OspryAC.Config.Behavior.ShowKickReason
 					then Reason
 					else "User has been kicked for Exploiting",
@@ -186,14 +157,11 @@ return function (OspryAC)
 		
 		--// Notifies a Player about a Warning
 		NotifyWarning = function(Plr : Player, Reason : string)
-			--// locals
-			local Remotes = require(OspryAC.Remotes)
-			local GuiRemote = Remotes("GuiSystem")
+			if not OspryAC.Config.Behavior.Warnings then return end
 			
 			--// Send to Client
-			GuiRemote:FireClients(
-				{Plr}, -- Yes, this has to be a Table.
-				"Warning",
+			OspryAC.calls.Send(
+				Plr, "DisplayGui", "Warning",
 				if OspryAC.Config.Behavior.ShowKickReason
 					then Reason
 					else "A Detection has been tripped."

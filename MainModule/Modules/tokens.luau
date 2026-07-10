@@ -8,7 +8,7 @@ local Players = game:GetService("Players")
 return function (OspryAC)
 	return {
 		--// Generates a Token for a Player
-		GenerateToken = function(Plr : Player)
+		Generate = function(Plr : Player)
 			--// Generate Token
 			local Token = math.random(100000, 999999) * (math.random() + time()) - DateTime.now().UnixTimestamp
 
@@ -18,7 +18,7 @@ return function (OspryAC)
 		end,
 		
 		--// Gets the Token of a Player
-		GetToken = function(Plr : Player)
+		Get = function(Plr : Player)
 			--// locals
 			local Token = OspryAC.Data.System.Tokens[Plr.UserId]
 			
