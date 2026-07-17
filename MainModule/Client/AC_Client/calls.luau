@@ -34,7 +34,7 @@ return function (Client)
 			end
 		end,
 
-		--// Initiates the Remote Module
+		--// Initiates the calls Module
 		Init = function()
 			--// Setup
 			Client.calls.Event:OnClientEvent(function(Request, command : string, ...)
