@@ -97,26 +97,27 @@ return function (OspryAC)
 			
 			local WhitelistConfig = OspryAC.Config.Whitelists
 			
-			--// Check Adonis _G API
+			--// Check _G.Adonis
 			if WhitelistConfig.AdonisWhitelist and AdonisAPI then
-				--// pcall API Request
-				-- Should prevent the _G API's hard crash effecting the Whitelist.
+				--// Check if _G.Adonis is reachable
+				-- Should prevent the Script hard crashing if the _G API is disabled
+				-- Also, why is this a thing?
 				local success, result = pcall(function()
-					return AdonisAPI.CheckAdmin(Plr)
+					return AdonisAPI.GetLevel(Plr)
 				end)
 				
 				--// Check Response
 				if not success then
-					OspryAC:warn("Failed to reach _G.Adonis!")
+					OspryAC:warn(`Failed to reach _G.Adonis!`)
 					OspryAC:warn(`{result}`)
 					
 				else
-					--// Export CheckAdmin result
-					return result
+					--// Check if Result is over Minimum Level
+					if result >= WhitelistConfig.Min_Level then return true end
 				end
 				
 			elseif WhitelistConfig.AdonisWhitelist and not AdonisAPI then
-				OspryAC:warn("_G.Adonis not found, is Adonis installed and running?")
+				OspryAC:warn(`_G.Adonis was not found, is Adonis running?`)
 			end
 			
 			--// Check Player Whitelist

@@ -28,6 +28,7 @@ return {
 	
 	Whitelists = {
 		AdonisWhitelist = false,
+		Min_Level = 100,
 		
 		Players = {},
 		Groups = {},

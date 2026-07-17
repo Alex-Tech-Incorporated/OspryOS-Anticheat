@@ -34,6 +34,7 @@ return {
 	Whitelists = {
 		--// Options
 		AdonisWhitelist = false, -- Uses the Adonis _G API to ignore Admins from Detections (Includes anyone with a Rank in Adonis)
+		Min_Level = 100, -- The Minimum Admin Level required for a Player to be ignored
 		
 		--// Whitelist Tables
 		Players = {
