@@ -90,10 +90,14 @@ return function (Client)
 					--// locals
 					local ViolationCounter = 0 -- Allows for some leniency with false positives
 					local CycleCounter = 0
+					
+					Plr.CharacterAdded:Wait() -- Waits for the Character to Load before it tries to run anything
 
 					--// loop check
 					while true do
 						task.wait(2.1) -- Raycast calls can be expensive so we call them with slight delay
+						
+						if not Plr.Character then return end -- Fallback just incase...
 
 						-- Making sure we only check for active players
 						if Plr.Character:FindFirstChild("HumanoidRootPart") ~= nil then
