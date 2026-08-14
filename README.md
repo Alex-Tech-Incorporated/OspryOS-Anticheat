@@ -7,7 +7,7 @@ Please check the [Official Setup Guide](https://github.com/Alex-Tech-Incorporate
 ## Server _G API
 The _G API allows Server Scripts to access certian Anticheat features, like access to functions or Tokens.
 
-> [!NOTICE]
+> !NOTICE
 > The _G API is a Work in Progress!
 
 # Credits
