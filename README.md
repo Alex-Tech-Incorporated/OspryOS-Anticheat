@@ -2,7 +2,9 @@
 The OspryOS Anticheat is a simple, lightweight and open-sourced Anticheat System made for Roblox, featuring strong Client and Server-sided Detections, which are highly configurable. The Anticheat also has integration with the _G API from the popular Admin System [Adonis](https://github.com/Epix-Incorporated/Adonis/tree/master), which will be expanded upon in the future.
 
 ## Setup
-Please check the [Official Setup Guide](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/wiki) on our Wiki Page.
+Please check out the [Setup Guide](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/wiki/Setup) on our Wiki Page for more information on Anticheat Setup.
+
+**All recommended checks are enabled by default, as they are the most reliable.** For all other checks, please check out the [Detections Wiki Page](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/wiki/Detections) for more info on how the Checks work and/or potential false positives.
 
 ## Server _G API
 The _G API allows Server Scripts to access certian Anticheat features, like access to functions or Tokens.
