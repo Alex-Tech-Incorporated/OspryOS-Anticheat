@@ -50,6 +50,7 @@ OspryOS_Anticheat.functions = require(Modules.functions)(OspryOS_Anticheat)
 OspryOS_Anticheat.tokens = require(Modules.tokens)(OspryOS_Anticheat)
 OspryOS_Anticheat.calls = require(Modules.calls)(OspryOS_Anticheat)
 OspryOS_Anticheat.HTTP = require(Modules.HTTP)(OspryOS_Anticheat)
+OspryOS_Anticheat.API = require(Modules.API)(OspryOS_Anticheat)
 
 OspryOS_Anticheat.Server_Module = require(Dependencies.Anticheat_Server)(OspryOS_Anticheat)
 
@@ -58,6 +59,7 @@ local ModuleLoad_Order = {
 	OspryOS_Anticheat.functions,
 	OspryOS_Anticheat.calls,
 	OspryOS_Anticheat.Server_Module,
+	OspryOS_Anticheat.API,
 }
 
 -- Prints --
@@ -79,17 +81,29 @@ end
 --// Configures the Anticheat's Settings and Data
 function OspryOS_Anticheat:Configure(Settings : typeof(OspryOS_Anticheat.Config), Data : typeof(OspryOS_Anticheat.Data))
 	--// Settings
-	for index, value in Settings do
-		OspryOS_Anticheat.Config[index] = value
+	for category, values in Settings do
+		for index, value in values do
+			--// locals
+			local Category = OspryOS_Anticheat.Config[category]
+			
+			--// Overwrite index
+			Category[index] = value
+		end
 	end
 	
 	--// Data
-	for index, value in Data do
-		OspryOS_Anticheat.Data[index] = value
+	for category, values in Data do
+		for index, value in values do
+			--// locals
+			local Category = OspryOS_Anticheat.Data[category]
+
+			--// Overwrite index
+			Category[index] = value
+		end
 	end
 	
 	--// Complete
-	OspryOS_Anticheat:debug("Anticheat Configured.")
+	OspryOS_Anticheat:debug("Configured.")
 end
 
 --// Starts the Anticheat's Initializations process

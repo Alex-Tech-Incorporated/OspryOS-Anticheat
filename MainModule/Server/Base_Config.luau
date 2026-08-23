@@ -21,6 +21,7 @@ return {
 		Max_Warns = 3,
 		
 		Strict_Tokens = false,
+		API = false,
 
 		SendToWebhook = false,
 		Webhook_URL = "CHANGE_THIS",
