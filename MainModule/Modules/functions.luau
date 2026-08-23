@@ -121,7 +121,7 @@ return function (OspryAC)
 			end
 			
 			--// Check Player Whitelist
-			if table.find(OspryAC.Config.Whitelists.Players, Plr.Name) or table.find(OspryAC.Config.Whitelists.Players, Plr.UserId) then
+			if table.find(WhitelistConfig.Players, Plr.Name) or table.find(WhitelistConfig.Players, Plr.UserId) then
 				return true
 			end
 			
@@ -157,13 +157,17 @@ return function (OspryAC)
 		end,
 		
 		--// Notifies a Player about a Warning
-		NotifyWarning = function(Plr : Player, Reason : string)
+		NotifyWarning = function(Plr : Player, Reason : string, displayOverride : boolean)
 			if not OspryAC.Config.Behavior.Warnings then return end
+			
+			--// locals
+			local showReason = if displayOverride then true
+				else OspryAC.Config.Behavior.ShowKickReason
 			
 			--// Send to Client
 			OspryAC.calls.Send(
 				Plr, "DisplayGui", "Warning",
-				if OspryAC.Config.Behavior.ShowKickReason
+				if showReason
 					then Reason
 					else "A Detection has been tripped."
 			)
@@ -202,7 +206,8 @@ return function (OspryAC)
 		end,
 		
 		--// Issues a Warning to a Player
-		Warn = function(Plr : Player, Reason : string, ModMessage : string)
+		-- The "DisplayReason" boolean will Override Behavior.ShowKickReason for this a warning.
+		Warn = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
 			if not OspryAC.Config.Behavior.Warnings then
 				--// Kick Player
 				OspryAC.functions.Kick(
@@ -233,7 +238,7 @@ return function (OspryAC)
 				
 				--// Send to Webhook
 				OspryAC.HTTP.SendWarnToWebhook(Plr, Reason, ModMessage)
-				OspryAC.functions.NotifyWarning(Plr, Reason)
+				OspryAC.functions.NotifyWarning(Plr, Reason, DisplayReason)
 				
 				--// Prints
 				OspryAC:debug(`{Plr.Name} has been issued a Warning.`)

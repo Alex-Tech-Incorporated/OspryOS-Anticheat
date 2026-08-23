@@ -14,7 +14,6 @@ return function (OspryAC)
 	return {
 		Init = function()
 			if not config.Behavior.API then return end
-			
 			OspryAC:debug(`Registering _G API calls...`)
 			
 			-- _G API functions --
@@ -25,8 +24,8 @@ return function (OspryAC)
 			end
 			
 			--// Adds integration with .Warn() within functions
-			G_API.Warn = function(Plr : Player, Reason : string, ModMessage : string)
-				functions.Warn(Plr, Reason, ModMessage)
+			G_API.Warn = function(Plr : Player, Reason : string, ModMessage : string, displayReason : boolean)
+				functions.Warn(Plr, Reason, ModMessage, displayReason)
 			end
 			
 			--// Allows a Player's current Warnings to be called by the _G API
