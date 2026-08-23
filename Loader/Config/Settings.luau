@@ -8,11 +8,11 @@ return {
 	--// Client-Sided Detections
 	ClientSide = {
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled
-		BtoolsDetection = true, -- Attempts to detect Btools in the Player's Backpack and Character
+		BtoolsDetection = false, -- Attempts to detect Btools in the Player's Backpack and Character
 		GuiDetection = false, -- (NOT RECOMMENDED) Attempts to detected unauthroized Guis and Scripts by checking if the object is also in StarterGui
 		
 		--// Advanced Client Detections
-		DexDetection = true, -- Please refer to our Documentation for more info on Dex Detection
+		DexDetection = false, -- Please refer to our Documentation for more info on Dex Detection
 		AWPDetection = false, -- A detection methood targetting AWP users, refer to Documentation for more detail
 	},
 	
@@ -25,7 +25,7 @@ return {
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
 		Strict_Tokens = false, -- If enabled, Tokens can only be called once by the Client
-		API = true, -- Allows the use of the _G API (_G.OspryAC), refer to Documentation for more detail
+		API = false, -- Allows the use of the _G API (_G.OspryAC), refer to Documentation for more detail
 		
 		SendToWebhook = false, -- Sends Kicks and Warnings to a Webhook
 		Webhook_URL = "CHANGE_THIS", -- Your Webhook URL
