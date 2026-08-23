@@ -7,10 +7,10 @@ Please check out the [Setup Guide](https://github.com/Alex-Tech-Incorporated/Osp
 **All recommended checks are enabled by default, as they are the most reliable.** For all other checks, please check out the [Detections Wiki Page](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/wiki/Detections) for more info on how the Checks work and/or potential false positives.
 
 ## Server _G API
-The _G API allows Server Scripts to access certian Anticheat features, like access to functions or Tokens.
+The _G API allows Server Scripts to access certian Anticheat features, like access to functions or Tokens. Check out the [API Wiki Page](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/wiki/API) for more info on how to use the _G API of the Anticheat.
 
 > [!IMPORTANT]
-> The _G API is a Work in Progress!
+> The _G API is unfinished, and subjected to change
 
 # Credits
 ## Contributors
