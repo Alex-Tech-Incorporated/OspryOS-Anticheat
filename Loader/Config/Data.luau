@@ -30,4 +30,23 @@ return {
 	WhitelistedGuis = {
 		-- EXAMPLE: "ScreenGui", "AdminGui"
 	},
+
+	--// HTTP used functions
+	HTTP = {
+		--// Embed Colors
+		KickColor = 16711680,
+		WarnColor = 16744192,
+		
+		--// Generates an Embed
+		GenerateEmbed = function(Plr : Player, Color : number, Fields : any)
+			return {
+				embeds = {{
+					title = "OspryOS Anticheat",
+					description = "@"..Plr.Name.." ("..Plr.UserId..")",
+					color = Color,
+					fields = Fields,
+				}}
+			}
+		end,
+	},
 }

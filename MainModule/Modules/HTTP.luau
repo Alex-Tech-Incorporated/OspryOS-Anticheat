@@ -6,26 +6,21 @@ local HTTPService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
 
 
-
--- Internal functions --
-
---// Generates an Embed
-local function GenerateEmbed(Plr : Player, Color : number, Fields : any)
-	return {
-		embeds = {{
-			title = "OspryOS Anticheat",
-			description = "@"..Plr.Name.." ("..Plr.UserId..")",
-			color = Color,
-			fields = Fields,
-		}}
-	}
-end
-
-
 --// Anticheat Framework
 return function (OspryAC)
+	--// locals
+	local Config = OspryAC.Config
+	local Data = OspryAC.Data
+	
+	local HTTP_Data = Data.HTTP
 	
 	-- Internal functions (Module dependant) --
+	
+	--// Generates an Embed
+	local function GenerateEmbed(Plr : Player, Color : number, Fields : any)
+		local generatedEmbed = HTTP_Data.GenerateEmbed(Plr, Color, Fields)
+		return generatedEmbed
+	end
 	
 	--// Attempts to fetch the Game's Name via :GetProductInfoAsync()
 	local function GetGameName()
@@ -72,7 +67,7 @@ return function (OspryAC)
 			}
 			
 			--// Payload
-			local Payload = GenerateEmbed(Plr, 16744192, Fields)
+			local Payload = GenerateEmbed(Plr, HTTP_Data.WarnColor, Fields)
 			
 			--// Attempt to send
 			local success, response = pcall(function()
@@ -108,7 +103,7 @@ return function (OspryAC)
 			}
 
 			--// Payload
-			local Payload = GenerateEmbed(Plr, 16711680, Fields)
+			local Payload = GenerateEmbed(Plr, HTTP_Data.KickColor, Fields)
 
 			--// Attempt to send
 			local success, response = pcall(function()

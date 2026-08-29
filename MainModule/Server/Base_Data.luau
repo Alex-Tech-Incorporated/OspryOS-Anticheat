@@ -21,6 +21,22 @@ return {
 	
 	WhitelistedGuis = {},
 	
+	HTTP = {
+		KickColor = 16711680,
+		WarnColor = 16744192,
+
+		GenerateEmbed = function(Plr : Player, Color : number, Fields : any)
+			return {
+				embeds = {{
+					title = "OspryOS Anticheat",
+					description = "@"..Plr.Name.." ("..Plr.UserId..")",
+					color = Color,
+					fields = Fields,
+				}}
+			}
+		end,
+	},
+	
 	--// Anticheat specific
 	System = {
 		Tokens = {}, -- Format: [UserId] = Token
