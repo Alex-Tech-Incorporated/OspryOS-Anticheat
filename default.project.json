@@ -1,0 +1,27 @@
+{
+    "name": "OspryOS Antichear",
+    "emitLegacyScripts": true,
+    "tree": {
+        "$className": "DataModel",
+
+        "ServerScriptService": {
+            "$className": "ServerScriptService",
+
+            "OspryOS_Anticheat_Rojo": {
+                "$className": "Folder",
+                "MainModule": {
+                    "$path": "MainModule"
+                },
+
+                "LICENSE": {
+                    "$path": "LICENSE.luau"
+                },
+
+                "OspryOS Anticheat": {
+                    "$className": "Folder",
+                    "$path": "Loader"
+                }
+            }
+        }
+    }
+}

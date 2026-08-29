@@ -1,0 +1,27 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Aftman
+        uses: ok-nick/setup-aftman@v0.4.2
+
+      - name: Lint (Selene)
+        run: selene src
+
+      - name: Build place file (Rojo)
+        run: rojo build default.project.json --output Anticheat.rbxl
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: anticheat-build
+          path: Anticheat.rbxl
