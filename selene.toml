@@ -5,3 +5,8 @@ std = "roblox"
 global_usage = "allow"
 unused_variable = "allow"
 multiple_statements = "allow"
+
+[lints]
+
+empty_if = "allow"
+must_use = "allow"
