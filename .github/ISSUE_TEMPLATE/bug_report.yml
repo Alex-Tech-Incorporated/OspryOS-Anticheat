@@ -1,6 +1,6 @@
 name: Bug Report
 description: Report a bug or issue with the Anticheat
-labels: ["bug"]
+labels: ["Bug"]
 
 body:
   - type: markdown
