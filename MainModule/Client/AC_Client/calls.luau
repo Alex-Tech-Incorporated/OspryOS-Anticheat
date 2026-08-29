@@ -20,7 +20,7 @@ return function (Client)
 		--// Gets ServerData by using the Get RemoteFunction
 		Get = function(DataType : string)
 			--// locals
-			local Data = Client.Mappings.Get:InvokeServer(DataType)
+			local Data = Client.calls.GetRemote:InvokeServer(DataType)
 
 			--// Check Response
 			if not Data.Success then
@@ -50,10 +50,11 @@ return function (Client)
 		Commands = {
 			--// Loads the Client
 			Load_Client = function()
-				--// Set Data
+				if Client.Loaded then return end
 				Client.Loaded = true
 
-				--// Get Configuration Variables
+				--// locals
+				local start = os.clock()
 				local Config = Client.calls.Get("config")
 				local Data = Client.calls.Get("data")
 				
@@ -79,6 +80,10 @@ return function (Client)
 				
 				--// Hide Client
 				if not Client.Config.DebugMode then
+					--// Rename Client
+					script.Parent.Name = game:GetService("HttpService"):GenerateGUID(true)
+					
+					--// Hide Client
 					getfenv().script.Parent:Destroy()
 					getfenv().script.Parent = nil
 				end
@@ -92,6 +97,7 @@ return function (Client)
 				local ProxyTable = getmetatable(ProxyContainer)
 
 				--// Lock Proxy
+				--[[
 				coroutine.wrap(function()
 					ProxyTable.__newindex = nil
 					ProxyTable.__concat = nil
@@ -102,6 +108,7 @@ return function (Client)
 
 					Client:debug("Metatable locked.")
 				end)()
+				]]
 				
 				--// Initialize Modules
 				Client:debug(`Initializing Modules...`)
@@ -110,7 +117,7 @@ return function (Client)
 				end
 				
 				--// Complete
-				Client:debug(`Client loaded.`)
+				Client:debug(`Client loaded, took: {os.clock() - start} seconds.`)
 				Client.calls.Send("Client_Loaded")
 			end,
 			

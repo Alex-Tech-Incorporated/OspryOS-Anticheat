@@ -40,49 +40,61 @@ return function (Client)
 			if Client.Config.BtoolsDetection then
 				--// locals
 				local Flagged = false
-
-				coroutine.wrap(function()
-					Plr.CharacterAdded:Connect(function(Char : Model)
-						Client:debug("Character loaded, starting Btools routine")
-
-						--// Detection loop
-						while true do
-							task.wait()
-
-							if Flagged then -- Since break cannot be used in the coroutines below, we instead call the kick like this so we can exit the loop without flooding the remote
-								Client:Kick("Btools detected", "Player has attempted to use Btools")
-								break
-							end
-
-							coroutine.wrap(function()  
-								--// locals
-								local Backpack = Plr:WaitForChild("Backpack")
-
-								-- Checking for the name first, then we check if its actually Building Tools by looking for certain components within the tool
-								if Backpack:FindFirstChild("Building Tools") ~= nil then
-									if Backpack:FindFirstChild("Building Tools"):FindFirstChild("Interfaces"):FindFirstChild("BTAnchorToolGUI") then
-										Flagged = true
-									end
-								end
-							end)()
-
-							coroutine.wrap(function()  
-								-- Checking if the player exists so we can evaluate safely
-								if Plr.Character == nil then
-									Client:Debug("Character does not exist, skipping character check due to no character to check")	
-								else
-									-- To be extra safe, check for btools in a pcall so the thread does not clog-up due to errors
-									pcall(function()
-										if Plr.Character:FindFirstChildOfClass("Tool") ~= nil then
-											if Plr.Character:FindFirstChildOfClass("Tool").Interfaces.BTAnchorToolGUI ~= nil then
-												Flagged = true
-											end
-										end
-									end)
-								end
-							end)()
+				
+				--// Detection loop
+				local function CheckForBtools(Char : Model)
+					Client:debug(`Character loaded, starting Btools routine`)
+					
+					--// Detection loop
+					while true do
+						task.wait()
+						
+						--// Check if User is flagged
+						-- Since break cannot be used in the coroutines below, we instead call the kick like this so we can exit the loop without flooding the remote
+						-- Is it obvious yet that this is a part of old 2.0 Code?
+						if Flagged then
+							Client:Kick("Btools detected", "Player has attempted to use Btools")
+							break
 						end
-					end)
+						
+						task.spawn(function()
+							--// locals
+							local Backpack = Plr:WaitForChild("Backpack")
+							
+							-- Checking for the name first, then we check if its actually Building Tools by looking for certain components within the tool
+							if Backpack:FindFirstChild("Building Tools") ~= nil then
+								if Backpack:FindFirstChild("Building Tools"):FindFirstChild("Interfaces"):FindFirstChild("BTAnchorToolGUI") then
+									Flagged = true
+								end
+							end
+						end)
+						
+						task.spawn(function()
+							-- Checking if the player exists so we can evaluate safely
+							if Plr.Character == nil then
+								Client:Debug("Character does not exist, skipping character check due to no character to check")
+								
+							else
+								pcall(function()
+									if Plr.Character:FindFirstChildOfClass("Tool") ~= nil then
+										if Plr.Character:FindFirstChildOfClass("Tool"):FindFirstChild("Interfaces"):FindFirstChild("BTAnchorToolGUI") ~= nil then
+											Flagged = true
+										end
+									end
+								end)
+							end
+						end)
+					end
+				end
+				
+				-- Connections --
+				coroutine.wrap(function()
+					-- Connections --
+					Plr.CharacterAdded:Connect(CheckForBtools)
+
+					-- Wait for Character --
+					if not Plr.Character then Plr.CharacterAdded:Wait() end
+					CheckForBtools(Plr.Character)
 				end)()
 			end
 
@@ -93,7 +105,7 @@ return function (Client)
 					local ViolationCounter = 0 -- Allows for some leniency with false positives
 					local CycleCounter = 0
 					
-					Plr.CharacterAdded:Wait() -- Waits for the Character to Load before it tries to run anything
+					if not Plr.Character then Plr.CharacterAdded:Wait() end -- Waits for the Character to Load before it tries to run anything
 
 					--// loop check
 					while true do

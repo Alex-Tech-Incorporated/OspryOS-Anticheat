@@ -30,6 +30,7 @@ local RemotesModule = RS:WaitForChild("OspryAC_Remotes")
 local Remotes = require(RemotesModule)
 
 --// Mappings
+--[[
 local Mappings = {
 	--// Client Inbound / Outbound
 	OspryAC = Remotes("OspryAC"),
@@ -38,6 +39,7 @@ local Mappings = {
 	--// Client Data
 	Get = Remotes("Get"),
 }
+]]
 
 --// Client Table
 local Client = {
@@ -66,7 +68,7 @@ local Client = {
 		Announcement = false,
 		Warning = false,
 	},
-	Mappings = Mappings,
+	-- Mappings = Mappings,
 	Loaded = false,
 }
 
