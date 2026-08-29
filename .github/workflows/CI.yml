@@ -15,7 +15,7 @@ jobs:
         uses: ok-nick/setup-aftman@v0.4.2
 
       - name: Lint (Selene)
-        run: selene src
+        run: selene Loader MainModule
 
       - name: Build place file (Rojo)
         run: rojo build default.project.json --output Anticheat.rbxl
