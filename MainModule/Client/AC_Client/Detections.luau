@@ -1,3 +1,5 @@
+--# selene: allow(empty_loop)
+
 --// locals
 --// Services
 local Players = game:GetService("Players")
