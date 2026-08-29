@@ -22,4 +22,5 @@ The _G API allows Server Scripts to access certian Anticheat features, like acce
 This section covers external Models, code or Tools used by the Anticheat or in its Repo, show these people some love!
 - [@Evercyan](https://gist.github.com/EvercyanRBX) for his [Remotes](https://devforum.roblox.com/t/remotes-%E2%80%94-natural-type-checking-debounce-and-more/3379709) Module
 - [@rinq](https://www.roblox.com/users/177766193/profile) for his [Dex and AWP Detection](https://devforum.roblox.com/t/awp-injection-detection-hook-detection-infinite-yield-detection-dex-explorer-detection/3560554) methods
+- [@Kampfkarren](https://github.com/Kampfkarren) for [selene](https://github.com/Kampfkarren/selene), being used for workflows
 - [contrib.rocks](https://contrib.rocks/) for the Contributors part within [README](https://github.com/Alex-Tech-Incorporated/OspryOS-Anticheat/blob/main/README.md)
