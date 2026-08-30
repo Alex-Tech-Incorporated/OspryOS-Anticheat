@@ -1,5 +1,5 @@
 {
-    "name": "OspryOS Antichear",
+    "name": "OspryOS Anticheat",
     "emitLegacyScripts": true,
     "tree": {
         "$className": "DataModel",
