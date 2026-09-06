@@ -67,7 +67,11 @@ return function (OspryAC)
 			}
 			
 			--// Payload
-			local Payload = GenerateEmbed(Plr, HTTP_Data.WarnColor, Fields)
+			local Payload = GenerateEmbed(
+				Plr,
+				HTTP_Data.WarnColor,
+				Fields
+			)
 			
 			--// Attempt to send
 			local success, response = pcall(function()
@@ -103,7 +107,11 @@ return function (OspryAC)
 			}
 
 			--// Payload
-			local Payload = GenerateEmbed(Plr, HTTP_Data.KickColor, Fields)
+			local Payload = GenerateEmbed(
+				Plr,
+				HTTP_Data.KickColor,
+				Fields
+			)
 
 			--// Attempt to send
 			local success, response = pcall(function()
