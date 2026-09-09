@@ -75,7 +75,7 @@ local Client = {
 --// Modules
 Client.Detections = require(script:WaitForChild("Detections"))(Client)
 Client.calls = require(script:WaitForChild("calls"))(Client)
-Client.Gui = require(script:WaitForChild("Gui"))(Client)
+task.spawn(function() Client.Gui = require(script:WaitForChild("Gui"))(Client) end) -- Made this Thread so it does not yield Detections and Calls :P
 
 --// Loading Order for Modules
 Client.ModuleLoad_Order = {

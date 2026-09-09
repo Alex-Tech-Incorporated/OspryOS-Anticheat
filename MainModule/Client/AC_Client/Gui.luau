@@ -25,7 +25,7 @@ return function (Client)
 	return {
 		--// Actions
 		Actions = {
-			--// Displays an Announcement, showing who was Kicked any why (If ShowReason is set to true)
+			--// Displays an Announcement, showing who was Kicked
 			Announce = function(Reason : string, KickedPlr : Player)
 				if not AnnouncementGui then return end
 				
