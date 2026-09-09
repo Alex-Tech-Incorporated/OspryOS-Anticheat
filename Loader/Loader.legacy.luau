@@ -38,7 +38,7 @@ local Loader = {
 	Data = require(LoaderData),
 	
 	--// Loader Version
-	Version = "3.2.1"
+	Version = "3.2.2",
 }
 
 function Loader:print(...)
@@ -52,9 +52,10 @@ end
 
 -- Loading process --
 Container.Parent = SSS -- Never leave Loaders in workspace... Especially Loaders like these.
+Loader:print(`Checking MainModule availability...`)
 
 --// Check if MainModule is availible
-local success, module = pcall(function()
+local success, result = pcall(function()
 	return require(
 		if Loader.Config.Development.LoadLocally then SSS:WaitForChild("MainModule", 60)
 			else Loader.Config.Development.MainModule
@@ -63,11 +64,12 @@ end)
 
 --// Check Response
 if success then
-	OspryAC = module
+	OspryAC = result
 	Loader:print("Loading...")
 	
 else
-	Loader:warn("Failed to require MainModule.")
+	Loader:warn(`MainModule has failed to require!`)
+	Loader:warn(result)
 	return
 end
 
@@ -83,7 +85,7 @@ local loaded, response = OspryAC:Initialize()
 
 --// Check if MainModule initialized
 if loaded then
-	Loader:print(`{response}, required by Loader Version {Loader.Version}`)
+	Loader:print(`{response}, required by Loader v{Loader.Version}`)
 	
 else
 	Loader:warn(`MainModule has failed to initialize!`)

@@ -138,7 +138,7 @@ function OspryOS_Anticheat:Initialize()
 	end
 	
 	--// Complete
-	return true, `Anticheat version v{OspryOS_Anticheat.Config.System.Version} successfully initialized`
+	return true, `Anticheat v{OspryOS_Anticheat.Config.System.Version} successfully initialized`
 end
 
 

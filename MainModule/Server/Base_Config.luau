@@ -41,6 +41,6 @@ return {
 	
 	--// Anticheat specific
 	System = {
-		Version = "3.2.1",
+		Version = "3.2.2",
 	}
 }
