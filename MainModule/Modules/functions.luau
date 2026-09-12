@@ -66,7 +66,7 @@ return function (OspryAC)
 				
 				--// Clear Data Tables
 				OspryAC.Data.System.Client_Stats[Plr.UserId] = nil
-				OspryAC.Data.System.Tokens[Plr.UserId] = nil
+				OspryAC.tokens.Delete(Plr)
 				
 				--// Clear Token if present
 				if Token then
