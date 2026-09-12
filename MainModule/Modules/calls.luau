@@ -77,11 +77,11 @@ return function (OspryAC)
 				--// Check if DataType is valid
 				if DataReq then
 					--// locals
-					local Data = DataReq(Plr, Token)
+					local fetchedData = DataReq(Plr, Token)
 					
 					--// Send to Client
 					return
-						if Data then Request:Close(Data)
+						if fetchedData then Request:Close(fetchedData)
 						else Request:Raise("A Data Request has returned nil, please rejoin.")
 					
 				else
