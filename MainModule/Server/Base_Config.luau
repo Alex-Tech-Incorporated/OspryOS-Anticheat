@@ -21,7 +21,7 @@ return {
 		Max_Warns = 3,
 		
 		Strict_Tokens = false,
-		GetReq_RequireToken = true,
+		GetReq_RequireToken = false,
 		API = false,
 
 		SendToWebhook = false,
