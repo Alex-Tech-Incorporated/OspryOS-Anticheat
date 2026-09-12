@@ -14,22 +14,18 @@ return function (OspryAC)
 
 			--// Assign Token to Player
 			OspryAC.Data.System.Tokens[Plr.UserId] = Token
-			OspryAC:debug(`Token generated for @{Plr.Name} ({Plr.UserId}) | {Token}`)
+			OspryAC:debug(`Generated Token for @{Plr.Name} ({Plr.UserId}) | {Token}`)
 		end,
 		
 		--// Gets the Token of a Player
 		Get = function(Plr : Player)
 			--// locals
-			local Token = OspryAC.Data.System.Tokens[Plr.UserId]
+			local Client_Tokens = OspryAC.Data.System.Tokens
+			local Token = Client_Tokens[Plr.UserId]
+			OspryAC:debug(`Found Token for {Plr.Name}: {Token}`)
 			
 			--// Check if Token exists
-			if Token then
-				return Token
-				
-			else
-				if OspryAC.Config.ClientSide.Enabled then OspryAC:warn(`Failed to fetch Token for {Plr.Name}.`) end
-				return nil
-			end
+			return if Token then Token else nil
 		end,
 	}
 end

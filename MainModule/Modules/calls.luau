@@ -9,6 +9,10 @@ return function (OspryAC)
 	local ClientActions
 	local ClientData
 	
+	--// OspryAC
+	local Config = OspryAC.Config
+	local Data = OspryAC.Data
+	
 	--// Export
 	return {
 		--// Sends a Command to a Client
@@ -64,15 +68,21 @@ return function (OspryAC)
 			end)
 			
 			--// "Get" RemoteFunction Connection
-			ClientData:OnServerInvoke(function(Request, DataType : string)
+			ClientData:OnServerInvoke(function(Request, DataType : string, Token : number)
 				--// locals
 				local Plr = Request.Client
-				local Data = OspryAC.calls.Requests[DataType]
+				local DataReq = OspryAC.calls.Requests[DataType]
 				OspryAC:debug(`Got Request from {Plr.Name} | {DataType}`)
 				
 				--// Check if DataType is valid
-				if Data then
-					return Request:Close(Data(Plr))
+				if DataReq then
+					--// locals
+					local Data = DataReq(Plr, Token)
+					
+					--// Send to Client
+					return
+						if Data then Request:Close(Data)
+						else Request:Raise("A Data Request has returned nil, please rejoin.")
 					
 				else
 					OspryAC:warn(`calls has recieved an invalid datatype from @{Plr.Name}.`)
@@ -183,26 +193,52 @@ return function (OspryAC)
 		-- Requests for the "Get" RemoteFunction
 		Requests = {
 			--// Config Variables for the Client
-			config = function()
+			config = function(Plr : Player, recvToken : number)
+				--// locals
+				local Token = OspryAC.tokens.Get(Plr)
+				local strict_ClientReq = Config.Behavior.GetReq_RequireToken
+				if Token and strict_ClientReq and Token ~= recvToken then
+					OspryAC.functions.Kick(
+						Plr,
+						`The Server recieved an invalid token.`,
+						`The "Get" RemoteFunction was called with "config", but the Token does not match.`
+					)
+					return nil
+				end
+				
+				--// Export to Client
 				return {
 					--// Detections
-					NoclipDetection = OspryAC.Config.ClientSide.NoclipDetection,
-					BtoolsDetection = OspryAC.Config.ClientSide.BtoolsDetection,
-					GuiDetection = OspryAC.Config.ClientSide.GuiDetection,
+					NoclipDetection = Config.ClientSide.NoclipDetection,
+					BtoolsDetection = Config.ClientSide.BtoolsDetection,
+					GuiDetection = Config.ClientSide.GuiDetection,
 
-					DexDetection = OspryAC.Config.ClientSide.DexDetection,
-					AWPDetection = OspryAC.Config.ClientSide.AWPDetection,
+					DexDetection = Config.ClientSide.DexDetection,
+					AWPDetection = Config.ClientSide.AWPDetection,
 
 					--// Development
-					DebugMode = OspryAC.Config.Development.DebugMode,
+					DebugMode = Config.Development.DebugMode,
 				}
 			end,
 			
 			--// Data Variables for the Client
-			data = function()
+			data = function(Plr : Player, recvToken : number)
+				--// locals
+				local Token = OspryAC.tokens.Get(Plr)
+				local strict_ClientReq = Config.Behavior.GetReq_RequireToken
+				if Token and strict_ClientReq and Token ~= recvToken then
+					OspryAC.functions.Kick(
+						Plr,
+						`The Server recieved an invalid token.`,
+						`The "Get" RemoteFunction was called with "data", but the Token does not match.`
+					)
+					return nil
+				end
+				
+				--// Export to Client
 				return {
-					NoclipConfig = OspryAC.Data.NoclipDetection,
-					WhitelistedGuis = OspryAC.Data.WhitelistedGuis,
+					NoclipConfig = Data.NoclipDetection,
+					WhitelistedGuis = Data.WhitelistedGuis,
 				}
 			end,
 			
@@ -211,12 +247,12 @@ return function (OspryAC)
 				--// locals
 				local Token = OspryAC.tokens.Get(Plr)
 
-				local StrictTokens = OspryAC.Config.Behavior.Strict_Tokens
-				local called_Tokens = OspryAC.Data.System.Called_Tokens
-				local TokenWasCalled = table.find(OspryAC.Data.System.Called_Tokens, Plr.UserId)
+				local StrictTokens = Config.Behavior.Strict_Tokens
+				local called_Tokens = Data.System.Called_Tokens
+				local Player_hasCalled = table.find(called_Tokens, Plr.UserId)
 
 				--// Check if Token was already called
-				if StrictTokens and TokenWasCalled then
+				if StrictTokens and Player_hasCalled then
 					--// Kick Player
 					OspryAC.functions.Kick(
 						Plr,

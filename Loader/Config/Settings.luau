@@ -25,6 +25,7 @@ return {
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
 		Strict_Tokens = false, -- If enabled, Tokens can only be called once by the Client
+		GetReq_RequireToken = true, -- If enabled, most Client Get Requests require the Client to send over the Token
 		API = false, -- Allows the use of the _G API (_G.OspryAC), refer to Documentation for more detail
 		
 		SendToWebhook = false, -- Sends Kicks and Warnings to a Webhook

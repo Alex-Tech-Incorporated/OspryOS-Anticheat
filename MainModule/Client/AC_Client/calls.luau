@@ -20,7 +20,7 @@ return function (Client)
 		--// Gets ServerData by using the Get RemoteFunction
 		Get = function(DataType : string)
 			--// locals
-			local Data = Client.calls.GetRemote:InvokeServer(DataType)
+			local Data = Client.calls.GetRemote:InvokeServer(DataType, Client.Token)
 
 			--// Check Response
 			if not Data.Success then
@@ -52,6 +52,9 @@ return function (Client)
 			Load_Client = function()
 				if Client.Loaded then return end
 				Client.Loaded = true
+				
+				--// Get Token
+				Client.Token = Client.calls.Get("token")
 
 				--// locals
 				local start = os.clock()
@@ -72,6 +75,7 @@ return function (Client)
 					end
 				end
 				Client:debug(`Configured.`)
+				Client:debug(`Got Token: {Client.Token}`)
 				
 				
 				
@@ -87,10 +91,6 @@ return function (Client)
 					getfenv().script.Parent:Destroy()
 					getfenv().script.Parent = nil
 				end
-
-				--// Get Token
-				Client.Token = Client.calls.Get("token")
-				Client:debug(`Got Token: {Client.Token}`)
 
 				--// Create Proxy
 				local ProxyContainer = newproxy(true)
