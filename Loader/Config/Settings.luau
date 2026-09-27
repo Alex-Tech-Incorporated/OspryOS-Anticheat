@@ -37,6 +37,7 @@ return {
 		Webhook_URL = "CHANGE_THIS", -- Your Webhook URL
 		
 		Use_HTTPSecret = false, -- Uses Roblox's HTTP Secret instead of a URL within the Config
+		HTTP_Secret_BaseURL = "https://discord.com/api/webhooks/", -- The URL to where the Payload gets sent to (Defaults to Discord's Webhook API)
 		HTTP_SecretKey = "CHANGE_ME", -- The Key for the HTTP Secret so the Anticheat can find it
 	},
 	

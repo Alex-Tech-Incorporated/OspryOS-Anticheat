@@ -56,9 +56,15 @@ OspryOS_Anticheat.Server_Module = require(Dependencies.Anticheat_Server)(OspryOS
 
 --// Loading Order for Modules
 local ModuleLoad_Order = {
+	--// Priority
 	OspryOS_Anticheat.functions,
 	OspryOS_Anticheat.calls,
+	OspryOS_Anticheat.HTTP,
+	
+	--// Server-Sided Detections
 	OspryOS_Anticheat.Server_Module,
+	
+	--// Misc
 	OspryOS_Anticheat.API,
 }
 
@@ -133,6 +139,7 @@ function OspryOS_Anticheat:Initialize()
 	end)()
 	
 	--// Initialize Modules
+	OspryOS_Anticheat:debug(`Loading Modules...`)
 	for _, module in ModuleLoad_Order do
 		module.Init()
 	end

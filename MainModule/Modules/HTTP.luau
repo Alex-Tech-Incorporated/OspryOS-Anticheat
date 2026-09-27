@@ -5,14 +5,30 @@
 local HTTPService = game:GetService("HttpService")
 local MarketplaceService = game:GetService("MarketplaceService")
 
-
 --// Anticheat Framework
 return function (OspryAC)
 	--// locals
 	local Config = OspryAC.Config
 	local Data = OspryAC.Data
 	
+	--// Anticheat Config
+	local Behavior = Config.Behavior
+	
+	--// Anticheat Data
 	local HTTP_Data = Data.HTTP
+	
+	--// Internal HTTP table
+	local HTTP = {
+		--// Main
+		Use_Secret = false,
+		
+		--// API
+		API_BaseURL = "https://discord.com/api/webhooks/", -- Used by the HTTP Secret
+		
+		--// Webhook URL and Secret
+		HTTP_Secret = nil,
+		Webhook_URL = nil,
+	}
 	
 	-- Internal functions (Module dependant) --
 	
@@ -42,6 +58,39 @@ return function (OspryAC)
 		return tostring(GameName)
 	end
 	
+	--// Sends a Payload to a Webhook
+	local function SendPayload(Plr : Player, Color : number, Fields : any)
+		--// Embed Payload
+		local Payload = GenerateEmbed(Plr, Color, Fields)
+		
+		--// Send Payload
+		local success, result = pcall(function()
+			return if HTTP.Use_Secret
+				then HTTPService:PostAsync(
+					`{HTTP.API_BaseURL}{HTTP.Use_Secret}`,
+					HTTPService:JSONEncode(Payload),
+					Enum.HttpContentType.ApplicationJson
+				)
+				
+				else HTTPService:PostAsync(
+					HTTP.Webhook_URL,
+					HTTPService:JSONEncode(Payload),
+					Enum.HttpContentType.ApplicationJson
+				)
+		end)
+		
+		--// Check Response
+		if success then
+			OspryAC:debug(`Webhook sent? | isSecret: {HTTP.Use_Secret}`)
+			
+		else
+			OspryAC:warn(`An error has occured while trying to send the Webhook's payload.`)
+			OspryAC:warn(result)
+			
+			OspryAC:debug(`isSecret: {HTTP.Use_Secret}`)
+		end
+	end
+	
 	
 	
 	--// Exported functions
@@ -54,7 +103,7 @@ return function (OspryAC)
 		
 		--// Sends a Webhook to Staff Members if a Player has been warned by the Anticheat
 		SendWarnToWebhook = function(Plr : Player, Reason : string, ModMessage : string)
-			if not OspryAC.Config.Behavior.SendToWebhook then return end
+			if not Behavior.SendToWebhook then return end
 			
 			--// Get Game Name
 			local GameName = GetGameName()
@@ -66,6 +115,10 @@ return function (OspryAC)
 				{ name = "Game", value = GameName, inline = false },
 			}
 			
+			--// Send to Webhook
+			SendPayload(Plr, HTTP_Data.WarnColor, Fields)
+			
+			--[[
 			--// Payload
 			local Payload = GenerateEmbed(
 				Plr,
@@ -90,11 +143,12 @@ return function (OspryAC)
 			else
 				OspryAC:debug("Webhook sent?")
 			end
+			]]
 		end,
 		
 		--// Sends a Webhook to Staff Members if a Player has been kicked by the Anticheat
 		SendKickToWebhook = function(Plr : Player, Reason : string, ModMessage : string)
-			if not OspryAC.Config.Behavior.SendToWebhook then return end
+			if not Behavior.SendToWebhook then return end
 			
 			--// Get Game Name
 			local GameName = GetGameName()
@@ -105,7 +159,11 @@ return function (OspryAC)
 				{ name = "Moderator Message", value = ModMessage, inline = false },
 				{ name = "Game", value = GameName, inline = false },
 			}
-
+			
+			--// Send to Webhook
+			SendPayload(Plr, HTTP_Data.KickColor, Fields)
+			
+			--[[
 			--// Payload
 			local Payload = GenerateEmbed(
 				Plr,
@@ -130,6 +188,54 @@ return function (OspryAC)
 			else
 				OspryAC:debug("Webhook sent?")
 			end
+			]]
+		end,
+		
+		
+		
+		--// Initiates the HTTP Module
+		Init = function()
+			if not Behavior.SendToWebhook then return end
+			
+			--// Check if HTTPService is enabled
+			if not HTTPService.HttpEnabled then
+				OspryAC:warn(`HTTP initialization skipped, HTTPService is not enabled.`)
+				return
+			end
+			
+			--// Set if Secret should be used
+			HTTP.Use_Secret = Behavior.Use_HTTPSecret
+			
+			--// Check if Secret should be used
+			if HTTP.Use_Secret then
+				--// Set Base URL
+				HTTP.API_BaseURL = Behavior.HTTP_Secret_BaseURL or "https://discord.com/api/webhooks/"
+				
+				--// Attempt to get Secret
+				local success, result = pcall(function()
+					return HTTPService:GetSecret(Behavior.HTTP_SecretKey)
+				end)
+				
+				--// Check Response
+				if not success then
+					OspryAC:warn(`Failed to fetch HTTP Secret! Falling back to Webhook URL.`)
+					OspryAC:warn(result)
+					
+					--// Disable usage of Secrets
+					HTTP.Use_Secret = false
+					
+				else
+					--// Set Secret
+					HTTP.HTTP_Secret = HTTPService.HttpEnabled and result or nil
+					OspryAC:debug(`Fetched HTTP Secret?`)
+				end
+			end
+			
+			--// Set Webhook URL
+			HTTP.Webhook_URL = Behavior.Webhook_URL
+			
+			--// Complete
+			OspryAC:debug(`HTTP initialization complete.`)
 		end,
 	}
 end
