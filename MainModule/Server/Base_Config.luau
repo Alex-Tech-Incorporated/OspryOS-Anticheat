@@ -26,6 +26,9 @@ return {
 
 		SendToWebhook = false,
 		Webhook_URL = "CHANGE_THIS",
+
+		Use_HTTPSecret = false,
+		HTTP_SecretKey = "CHANGE_ME",
 	},
 	
 	Whitelists = {
