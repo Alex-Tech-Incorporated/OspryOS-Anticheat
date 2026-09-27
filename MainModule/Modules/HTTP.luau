@@ -67,7 +67,7 @@ return function (OspryAC)
 		local success, result = pcall(function()
 			return if HTTP.Use_Secret
 				then HTTPService:PostAsync(
-					`{HTTP.API_BaseURL}{HTTP.Use_Secret}`,
+					HTTP.API_BaseURL .. HTTP.Use_Secret,
 					HTTPService:JSONEncode(Payload),
 					Enum.HttpContentType.ApplicationJson
 				)
