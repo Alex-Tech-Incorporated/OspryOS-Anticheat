@@ -26,7 +26,7 @@ return function (OspryAC)
 		API_BaseURL = "https://discord.com/api/webhooks/", -- Used by the HTTP Secret
 		
 		--// Webhook URL and Secret
-		HTTP_Secret = nil,
+		Secret_Key = nil,
 		Webhook_URL = nil,
 	}
 	
@@ -62,21 +62,27 @@ return function (OspryAC)
 	local function SendPayload(Plr : Player, Color : number, Fields : any)
 		--// Embed Payload
 		local Payload = GenerateEmbed(Plr, Color, Fields)
+		if not Payload then OspryAC:warn(`Embed Generation failed, got: {Payload}`) return end
+		
+		local Body = HTTPService:JSONEncode(Payload)
 		
 		--// Send Payload
 		local success, result = pcall(function()
-			return if HTTP.Use_Secret
-				then HTTPService:PostAsync(
-					HTTP.API_BaseURL .. HTTP.Use_Secret,
-					HTTPService:JSONEncode(Payload),
-					Enum.HttpContentType.ApplicationJson
-				)
+			--// URL local
+			local URL
+			
+			--// Check if HTTP Secret should be used
+			if HTTP.Use_Secret then
+				assert(HTTP.Secret_Key, "HTTP_SecretKey is nil")
+				assert(HTTP.API_BaseURL, "HTTP_Secret_BaseURL is nil")
+				URL = HTTPService:GetSecret(HTTP.Secret_Key):AddPrefix(HTTP.API_BaseURL)
 				
-				else HTTPService:PostAsync(
-					HTTP.Webhook_URL,
-					HTTPService:JSONEncode(Payload),
-					Enum.HttpContentType.ApplicationJson
-				)
+			else
+				assert(HTTP.Webhook_URL, "Webhook_URL is nil")
+				URL = HTTP.Webhook_URL
+			end
+			
+			return HTTPService:PostAsync(URL, Body, Enum.HttpContentType.ApplicationJson)
 		end)
 		
 		--// Check Response
@@ -206,8 +212,12 @@ return function (OspryAC)
 			
 			--// Check if Secret should be used
 			if HTTP.Use_Secret then
+				--// Set Secret Key
+				HTTP.Secret_Key = Behavior.HTTP_SecretKey
+				
 				--// Set Base URL
 				HTTP.API_BaseURL = Behavior.HTTP_Secret_BaseURL or "https://discord.com/api/webhooks/"
+				OspryAC:debug(`Set Base URL to: {HTTP.API_BaseURL}`)
 				
 				--// Attempt to get Secret
 				local success, result = pcall(function()
@@ -224,13 +234,13 @@ return function (OspryAC)
 					
 				else
 					--// Set Secret
-					HTTP.HTTP_Secret = HTTPService.HttpEnabled and result or nil
-					OspryAC:debug(`Fetched HTTP Secret?`)
+					HTTP.HTTP_Secret = tostring(result) or nil
+					OspryAC:debug(`Found HTTP Secret?`)
 				end
 			end
 			
 			--// Set Webhook URL
-			HTTP.Webhook_URL = Behavior.Webhook_URL
+			HTTP.Webhook_URL = tostring(Behavior.Webhook_URL)
 			
 			--// Complete
 			OspryAC:debug(`HTTP initialization complete.`)
