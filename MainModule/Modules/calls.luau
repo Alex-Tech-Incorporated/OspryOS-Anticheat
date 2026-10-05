@@ -62,7 +62,7 @@ return function (OspryAC)
 					OspryAC.functions.Kick(
 						Plr,
 						"Do not attempt to forge Client Actions!",
-						`Player has attempted to forge Client Actions data`
+						`Player has sent an invalid DataType to the Server, got: {Type}`
 					)
 				end
 			end)

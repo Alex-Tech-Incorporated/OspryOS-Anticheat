@@ -84,10 +84,8 @@ return function (OspryAC)
 			OspryAC:debug(`Webhook sent? | isSecret: {HTTP.Use_Secret}`)
 			
 		else
-			OspryAC:warn(`An error has occured while trying to send the Webhook's payload.`)
+			OspryAC:warn(`An error has occured while trying to send the Webhook's payload. | isSecret: {HTTP.Use_Secret}`)
 			OspryAC:warn(result)
-			
-			OspryAC:debug(`isSecret: {HTTP.Use_Secret}`)
 		end
 	end
 	
