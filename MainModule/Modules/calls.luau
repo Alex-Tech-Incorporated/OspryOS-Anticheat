@@ -3,6 +3,10 @@
 --// Anticheat Framework
 return function (OspryAC)
 	--// locals
+	--// Services
+	local RunService = game:GetService("RunService")
+	
+	--// calls
 	-- All of these get set once calls Initializes.
 	local Remotes
 	local ClientRemote
@@ -91,6 +95,23 @@ return function (OspryAC)
 			end)
 		end,
 		
+		--// Attempts to check if a Client loaded
+		Is_ClientLoaded = function(Plr : Player): boolean
+			--// locals
+			local Timeout = RunService:IsStudio() and 1000 or Config.ClientSide.Load_Timeout
+			local end_time = os.time() + Timeout
+			
+			--// Check if the Client already loaded
+			if Data.System.Client_Stats[Plr.UserId] == "Complete" then
+				return true
+			end
+			
+			--// Wait for Client to Complete loading...
+			repeat task.wait(1) until Data.System.Client_Stats[Plr.UserId] == "Complete" or os.time() > end_time
+			
+			return Data.System.Client_Stats[Plr.UserId] == "Complete"
+		end,
+		
 		
 		
 		-- Server Actions --
@@ -108,7 +129,7 @@ return function (OspryAC)
 				OspryAC.tokens.Generate(Plr)
 				
 				--// Load Client
-				OspryAC.Data.System.Client_Stats[Plr.UserId] = "Loading"
+				Data.System.Client_Stats[Plr.UserId] = "Loading"
 				OspryAC.calls.Send(Plr, "Load_Client")
 			end,
 			
@@ -124,7 +145,7 @@ return function (OspryAC)
 				end
 				
 				--// Set System
-				OspryAC.Data.System.Client_Stats[Plr.UserId] = "Complete"
+				Data.System.Client_Stats[Plr.UserId] = "Complete"
 				OspryAC:debug(`Client loaded, {Plr.Name}`)
 			end,
 		},

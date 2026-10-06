@@ -49,6 +49,21 @@ return function (OspryAC)
 					--// Complete
 					OspryAC:debug(`Cloned "{Clone.Name}" into`, PlayerGui:GetFullName())
 				end
+				
+				OspryAC:debug(`Waiting for the Client of {Plr.Name}...`)
+				
+				--// Final Client check
+				local Client_Loaded = OspryAC.calls.Is_ClientLoaded(Plr)
+				if not Client_Loaded then
+					OspryAC.functions.Kick(
+						Plr,
+						`Your Client has timed out while loading, please rejoin!`,
+						`The Player's Client has exceeded the timeout window of {OspryAC.Config.ClientSide.Load_Timeout} second(s)`
+					)
+				end
+				
+				--// Complete
+				OspryAC:debug(`{Plr.Name}'s Client has loaded, initialization complete.`)
 			end)
 			
 			--// Connection for the Anticheat to cleanup Player Data as soon as the Player leaves

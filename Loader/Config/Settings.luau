@@ -7,6 +7,9 @@ return {
 	
 	--// Client-Sided Detections
 	ClientSide = {
+		--// Client Settings
+		Load_Timeout = 60, -- The Time before a Client is counted as "Timed-out" on loading
+		
 		--// Basic Detections
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled
 		BtoolsDetection = false, -- Attempts to detect Btools in the Player's Backpack and Character
