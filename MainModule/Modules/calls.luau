@@ -63,12 +63,15 @@ return function (OspryAC)
 					Action(Request, ...)
 					
 				else
+					--// Debounce
+					Request:Debounce(Plr, 30)
+					
+					--// Kick
 					OspryAC.functions.Kick(
 						Plr,
 						"Do not attempt to forge Client Actions!",
 						`Player has sent an invalid DataType to the Server, got: {Type}`
 					)
-					Request:Debounce(Plr, 5)
 				end
 			end)
 			
@@ -156,6 +159,9 @@ return function (OspryAC)
 		Actions = {
 			--// Warns a Player from a Client Request
 			Warn = function(Request, Reason : string, ModMessage : string, recvToken : number)
+				--// Debounce
+				Request:Debounce(Request.Client, 1) -- Prevents Requests being spammed
+				
 				--// locals
 				local Plr = Request.Client
 				local Token = OspryAC.tokens.Get(Plr)
@@ -177,13 +183,13 @@ return function (OspryAC)
 						ModMessage
 					)
 				end
-
-				--// Debounce
-				Request:Debounce(Plr, 1) -- Prevents Requests being spammed
 			end,
 			
 			--// Kicks a Player from a Client Request
 			Kick = function(Request, Reason : string, ModMessage : string, recvToken : number)
+				--// Debounce
+				Request:Debounce(Request.Client, 5) -- Prevents Requests being spammed
+				
 				--// locals
 				local Plr = Request.Client
 				local Token = OspryAC.tokens.Get(Plr)
@@ -205,9 +211,6 @@ return function (OspryAC)
 						ModMessage
 					)
 				end
-
-				--// Debounce
-				Request:Debounce(Plr, 5) -- Prevents Requests being spammed
 			end,
 		},
 		
