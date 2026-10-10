@@ -58,7 +58,8 @@ return function (OspryAC)
 					OspryAC.functions.Kick(
 						Plr,
 						`Your Client has timed out while loading, please rejoin!`,
-						`The Player's Client has exceeded the timeout window of {OspryAC.Config.ClientSide.Load_Timeout} second(s)`
+						`The Player's Client has exceeded the timeout window of {OspryAC.Config.ClientSide.Load_Timeout} second(s)`,
+						true
 					)
 				end
 				

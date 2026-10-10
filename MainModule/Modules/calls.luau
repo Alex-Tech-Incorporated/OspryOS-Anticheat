@@ -68,6 +68,7 @@ return function (OspryAC)
 						"Do not attempt to forge Client Actions!",
 						`Player has sent an invalid DataType to the Server, got: {Type}`
 					)
+					Request:Debounce(Plr, 5)
 				end
 			end)
 			
