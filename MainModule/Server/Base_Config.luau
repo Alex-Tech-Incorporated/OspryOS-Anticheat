@@ -48,6 +48,6 @@ return {
 	
 	--// Anticheat specific
 	System = {
-		Version = "3.2.3",
+		Version = "3.2.3-Patch 1",
 	}
 }
