@@ -47,12 +47,12 @@ return function (OspryAC)
 
 		--// Check if Fetch failed
 		if not success then
-			OspryAC:warn("HTTP has failed to fetch the Game's Name!")
+			OspryAC:warn("HTTP has failed to fetch the Game's Name, MarketplaceService API's may be unavailible.")
 			OspryAC:warn(`result: {result}`)
 		end
 
 		--// Fetched GameName
-		local GameName = success and result.Name or "N/A"
+		local GameName = success and result.Name or "Unknown"
 
 		--// Export
 		return tostring(GameName)
@@ -60,39 +60,41 @@ return function (OspryAC)
 	
 	--// Sends a Payload to a Webhook
 	local function SendPayload(Plr : Player, Color : number, Fields : any)
-		--// Embed Payload
-		local Payload = GenerateEmbed(Plr, Color, Fields)
-		if not Payload then OspryAC:warn(`Embed Generation failed, got: {Payload}`) return end
-		
-		local Body = HTTPService:JSONEncode(Payload)
-		
-		--// Send Payload
-		local success, result = pcall(function()
-			--// URL local
-			local URL
-			
-			--// Check if HTTP Secret should be used
-			if HTTP.Use_Secret then
-				assert(HTTP.Secret_Key, "HTTP_SecretKey is nil")
-				assert(HTTP.API_BaseURL, "HTTP_Secret_BaseURL is nil")
-				URL = HTTPService:GetSecret(HTTP.Secret_Key):AddPrefix(HTTP.API_BaseURL)
-				
+		task.spawn(function()
+			--// Embed Payload
+			local Payload = GenerateEmbed(Plr, Color, Fields)
+			if not Payload then OspryAC:warn(`Embed Generation failed, got: {Payload}`) return end
+
+			local Body = HTTPService:JSONEncode(Payload)
+
+			--// Send Payload
+			local success, result = pcall(function()
+				--// URL local
+				local URL
+
+				--// Check if HTTP Secret should be used
+				if HTTP.Use_Secret then
+					assert(HTTP.Secret_Key, "HTTP_SecretKey is nil")
+					assert(HTTP.API_BaseURL, "HTTP_Secret_BaseURL is nil")
+					URL = HTTPService:GetSecret(HTTP.Secret_Key):AddPrefix(HTTP.API_BaseURL)
+
+				else
+					assert(HTTP.Webhook_URL, "Webhook_URL is nil")
+					URL = HTTP.Webhook_URL
+				end
+
+				return HTTPService:PostAsync(URL, Body, Enum.HttpContentType.ApplicationJson)
+			end)
+
+			--// Check Response
+			if success then
+				OspryAC:debug(`Webhook sent? | isSecret: {HTTP.Use_Secret}`)
+
 			else
-				assert(HTTP.Webhook_URL, "Webhook_URL is nil")
-				URL = HTTP.Webhook_URL
+				OspryAC:warn(`An error has occured while trying to send the Webhook's payload. | isSecret: {HTTP.Use_Secret}`)
+				OspryAC:warn(result)
 			end
-			
-			return HTTPService:PostAsync(URL, Body, Enum.HttpContentType.ApplicationJson)
 		end)
-		
-		--// Check Response
-		if success then
-			OspryAC:debug(`Webhook sent? | isSecret: {HTTP.Use_Secret}`)
-			
-		else
-			OspryAC:warn(`An error has occured while trying to send the Webhook's payload. | isSecret: {HTTP.Use_Secret}`)
-			OspryAC:warn(result)
-		end
 	end
 	
 	
