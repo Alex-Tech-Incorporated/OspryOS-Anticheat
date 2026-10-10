@@ -19,7 +19,7 @@ return function (OspryAC)
 			-- _G API functions --
 			
 			--// Adds integration with .Kick() within functions
-			G_API.Kick = function(Plr : Player, Reason : string, ModMessage : string)
+			G_API.Kick = function(Plr : Player, Reason : string, ModMessage : string, displayReason : boolean)
 				functions.Kick(Plr, Reason, ModMessage)
 			end
 			

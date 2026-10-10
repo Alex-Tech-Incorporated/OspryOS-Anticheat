@@ -191,9 +191,11 @@ return function (OspryAC)
 		
 		
 		--// Kicks a Player from the Game
-		Kick = function(Plr : Player, Reason : string, ModMessage : string)
+		Kick = function(Plr : Player, Reason : string, ModMessage : string, displayOverride : boolean)
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
+			local showReason = if displayOverride then true
+				else OspryAC.Config.Behavior.ShowKickReason
 			if isWhitelisted then return end
 			
 			--// Send to Webhook and Announce
@@ -205,7 +207,7 @@ return function (OspryAC)
 				Plr:Kick(
 					"[OspryOS Anticheat]"
 					.."\nYou have been kicked for Exploiting"
-					..if OspryAC.Config.Behavior.ShowKickReason then "\n\nReason:\n"..Reason else ""
+					..if showReason then "\n\nReason:\n"..Reason else ""
 				)
 				
 				--// Print
@@ -242,8 +244,9 @@ return function (OspryAC)
 			if currentWarns >= OspryAC.Config.Behavior.Max_Warns then
 				OspryAC.functions.Kick(
 					Plr,
-					"Maximum Warnings exceeded",
-					`Player has exceeded the Maximum Warnings set ({OspryAC.Config.Behavior.Max_Warns} Warnings)`
+					"You have exceeded the Maximum Warnings set.",
+					`Player has exceeded the Maximum Warnings set ({OspryAC.Config.Behavior.Max_Warns} Warnings)`,
+					true
 				)
 				
 			else
