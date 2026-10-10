@@ -95,20 +95,30 @@ return function (Client)
 				--// Create Proxy
 				local ProxyContainer = newproxy(true)
 				local ProxyTable = getmetatable(ProxyContainer)
-
+				
 				--// Lock Proxy
-				--[[
 				coroutine.wrap(function()
+					--[[ -- These cause issues with Client behavior, so they will remain unused.
 					ProxyTable.__newindex = nil
 					ProxyTable.__concat = nil
 					ProxyTable.__tostring = "OspryOS Anticheat" -- Can be replaced with nil but adding this to confuse exploiters
 					ProxyTable.__len = math.random(1, 9999)  -- Can be replaced with nil but adding this to confuse exploiters
-					setmetatable(Client.Mappings, ProxyTable)
+					
+					
+					--// Set Metatable and lock
+					setmetatable(Client, ProxyTable)
 					ProxyTable.__metatable = nil -- Locks the table for set and get metatable methods
-
-					Client:debug("Metatable locked.")
+					
+					Client:debug(`Metatable locked.`)
+					]]
+					
+					--// Freeze Config and Data
+					table.freeze(Client.Config)
+					table.freeze(Client.Data)
+					table.freeze(Client.Data.NoclipConfig)
+					table.freeze(Client.Data.WhitelistedGuis)
+					Client:debug(`Froze Config and Data Tables.`)
 				end)()
-				]]
 				
 				--// Initialize Modules
 				Client:debug(`Initializing Modules...`)
