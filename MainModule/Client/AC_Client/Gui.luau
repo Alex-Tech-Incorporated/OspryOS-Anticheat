@@ -18,15 +18,13 @@ return function (Client)
 	local Plr = Client.Plr :: Player?
 	local PlayerGui = Plr:WaitForChild("PlayerGui")
 	
-	local AnnouncementGui = PlayerGui:WaitForChild("__OspryAC_KickAnnounce", 10)
-	local WarnGui = PlayerGui:WaitForChild("__OsprAC_WarnGui", 10)
-	
 	--// Export
 	return {
 		--// Actions
 		Actions = {
 			--// Displays an Announcement, showing who was Kicked
 			Announce = function(Reason : string, KickedPlr : Player)
+				local AnnouncementGui = PlayerGui:WaitForChild("__OspryAC_KickAnnounce", 10)
 				if not AnnouncementGui then return end
 				
 				--// Check for Debounce
@@ -59,6 +57,7 @@ return function (Client)
 			
 			--// Displays the issued Warning to the Player
 			Warning = function(Reason : string)
+				local WarnGui = PlayerGui:WaitForChild("__OsprAC_WarnGui", 10)
 				if not WarnGui then return end
 				
 				--// Check for Debounce

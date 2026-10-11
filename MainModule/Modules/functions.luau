@@ -9,6 +9,10 @@ local GroupService = game:GetService("GroupService")
 
 --// Anticheat Framework
 return function (OspryAC)
+	--// OspryAC
+	local Config = OspryAC.Config
+	local Data = OspryAC.Data
+	
 	--// Exported functions
 	return {
 		--// Initiates the functions module
@@ -24,14 +28,14 @@ return function (OspryAC)
 				local GuiData = {
 					--// KickAnnounce Gui Data
 					KickAnnounce = {
-						Enabled = OspryAC.Config.Behavior.AnnounceKicks,
+						Enabled = Config.Behavior.AnnounceKicks,
 						Gui = OspryAC.Client.Guis:WaitForChild("KickAnnounce"),
 						Final = "__OspryAC_KickAnnounce",
 					},
 
 					--// WarningPopup Gui Data
 					WarningPopup = {
-						Enabled = OspryAC.Config.Behavior.Warnings,
+						Enabled = Config.Behavior.Warnings,
 						Gui = OspryAC.Client.Guis:WaitForChild("WarningPopup"),
 						Final = "__OsprAC_WarnGui",
 					},
@@ -55,11 +59,16 @@ return function (OspryAC)
 				--// Final Client check
 				local Client_Loaded = OspryAC.calls.Is_ClientLoaded(Plr)
 				if not Client_Loaded then
-					OspryAC.functions.Kick(
+					Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
+						`[OspryOS Anticheat]`
+						..`\nYour Client has timed out while loading, please rejoin!`
+					)
+					
+					--// Send to Webhook
+					OspryAC.HTTP.SendKickToWebhook(
 						Plr,
-						`Your Client has timed out while loading, please rejoin!`,
-						`The Player's Client has exceeded the timeout window of {OspryAC.Config.ClientSide.Load_Timeout} second(s)`,
-						true
+						"Your Client has timed out while loading, please rejoin!",
+						`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s)`
 					)
 				end
 				
@@ -73,7 +82,7 @@ return function (OspryAC)
 				
 				--// locals
 				local Token = OspryAC.tokens.Get(Plr)
-				local Called_Tokens = OspryAC.Data.System.Called_Tokens
+				local Called_Tokens = Data.System.Called_Tokens
 				
 				local hasCalledToken = table.find(
 					Called_Tokens,
@@ -81,7 +90,7 @@ return function (OspryAC)
 				)
 				
 				--// Clear Data Tables
-				OspryAC.Data.System.Client_Stats[Plr.UserId] = nil
+				Data.System.Client_Stats[Plr.UserId] = nil
 				OspryAC.tokens.Delete(Plr)
 				
 				--// Clear Token if present
@@ -96,7 +105,7 @@ return function (OspryAC)
 						end
 					end
 				end
-				OspryAC:debug(OspryAC.Data.System)
+				OspryAC:debug(Data.System)
 				
 				--// Cleanup Complete
 				OspryAC:debug(`Cleanup completetd, {Plr.Name}`)
@@ -111,7 +120,7 @@ return function (OspryAC)
 			local AdonisAPI = _G.Adonis
 			-- local ArclightAPI = _G.Arclight -- Support for an Adonis fork, coming soon.
 			
-			local WhitelistConfig = OspryAC.Config.Whitelists
+			local WhitelistConfig = Config.Whitelists
 			
 			--// Check _G.Adonis
 			if WhitelistConfig.AdonisWhitelist and AdonisAPI then
@@ -142,7 +151,7 @@ return function (OspryAC)
 			end
 			
 			--// Check Group Rank in Whitelisted Groups
-			for groupID, minRank in pairs(OspryAC.Config.Whitelists.Groups) do
+			for groupID, minRank in pairs(WhitelistConfig.Groups) do
 				if typeof(groupID) == "number" then
 					if Plr:GetRankInGroupAsync(groupID) >= minRank then
 						return true
@@ -160,12 +169,12 @@ return function (OspryAC)
 		
 		--// Announces if a User is kicked to all Players currently in-game
 		AnnounceToClients = function(KickedPlr : Player, Reason : string)
-			if not OspryAC.Config.Behavior.AnnounceKicks then return end
+			if not Config.Behavior.AnnounceKicks then return end
 			
 			--// Send to Clients
 			OspryAC.calls.SendAll(
 				"DisplayGui", "Announce",
-				if OspryAC.Config.Behavior.ShowKickReason
+				if Config.Behavior.ShowKickReason
 					then Reason
 					else "User has been kicked for Exploiting",
 				KickedPlr
@@ -174,11 +183,11 @@ return function (OspryAC)
 		
 		--// Notifies a Player about a Warning
 		NotifyWarning = function(Plr : Player, Reason : string, displayOverride : boolean)
-			if not OspryAC.Config.Behavior.Warnings then return end
+			if not Config.Behavior.Warnings then return end
 			
 			--// locals
 			local showReason = if displayOverride then true
-				else OspryAC.Config.Behavior.ShowKickReason
+				else Config.Behavior.ShowKickReason
 			
 			--// Send to Client
 			OspryAC.calls.Send(
@@ -196,7 +205,7 @@ return function (OspryAC)
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
 			local showReason = if displayOverride then true
-				else OspryAC.Config.Behavior.ShowKickReason
+				else Config.Behavior.ShowKickReason
 			if isWhitelisted then return end
 			
 			--// Send to Webhook and Announce
@@ -204,7 +213,7 @@ return function (OspryAC)
 			OspryAC.functions.AnnounceToClients(Plr, Reason)
 			
 			--// Kick
-			if not OspryAC.Config.Development.DebugMode then
+			if not Config.Development.DebugMode then
 				Plr:Kick(
 					"[OspryOS Anticheat]"
 					.."\nYou have been kicked for Exploiting"
@@ -226,7 +235,7 @@ return function (OspryAC)
 		--// Issues a Warning to a Player
 		-- The "DisplayReason" boolean will Override Behavior.ShowKickReason for this a warning.
 		Warn = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
-			if not OspryAC.Config.Behavior.Warnings then
+			if not Config.Behavior.Warnings then
 				--// Kick Player
 				OspryAC.functions.Kick(
 					Plr,
@@ -238,22 +247,22 @@ return function (OspryAC)
 			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
-			local currentWarns = OspryAC.Data.System.Warnings[Plr.UserId] or 0
+			local currentWarns = Data.System.Warnings[Plr.UserId] or 0
 			if isWhitelisted then return end
 			
 			--// Check Warnings
-			if currentWarns >= OspryAC.Config.Behavior.Max_Warns then
+			if currentWarns >= Config.Behavior.Max_Warns then
 				OspryAC.functions.Kick(
 					Plr,
 					"You have exceeded the Maximum Warnings set.",
-					`Player has exceeded the Maximum Warnings set ({OspryAC.Config.Behavior.Max_Warns} Warnings)`,
+					`Player has exceeded the Maximum Warnings set ({Config.Behavior.Max_Warns} Warnings)`,
 					true
 				)
 				
 			else
 				--// Issue Warning
-				OspryAC.Data.System.Warnings[Plr.UserId] = currentWarns +1
-				OspryAC:debug(`{Plr.Name}: {OspryAC.Data.System.Warnings[Plr.UserId]}/{OspryAC.Config.Behavior.Max_Warns}`)
+				Data.System.Warnings[Plr.UserId] = currentWarns +1
+				OspryAC:debug(`{Plr.Name}: {Data.System.Warnings[Plr.UserId]}/{Config.Behavior.Max_Warns}`)
 				
 				--// Send to Webhook
 				OspryAC.HTTP.SendWarnToWebhook(Plr, Reason, ModMessage)
