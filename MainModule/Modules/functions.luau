@@ -42,12 +42,12 @@ return function (OspryAC)
 				}
 				
 				--// Clone Guis into PlayerGui
-				for Gui, Data in pairs(GuiData) do
-					if not Data.Enabled then continue end
+				for Gui, data in pairs(GuiData) do
+					if not data.Enabled then continue end
 					
 					--// Clone to PlayerGui
-					local Clone = Data.Gui:Clone()
-					Clone.Name = Data.Final
+					local Clone = data.Gui:Clone()
+					Clone.Name = data.Final
 					Clone.Parent = PlayerGui
 					
 					--// Complete
