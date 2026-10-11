@@ -8,7 +8,7 @@ return {
 	--// Client-Sided Detections
 	ClientSide = {
 		--// Client Settings
-		Load_Timeout = 60, -- The Time before a Client is counted as "Timed-out" on loading
+		Load_Timeout = 120, -- The Time before a Client is counted as "Timed-out" on loading
 		
 		--// Basic Detections
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled

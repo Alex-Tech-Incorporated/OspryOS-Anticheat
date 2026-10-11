@@ -5,7 +5,7 @@ return {
 	},
 
 	ClientSide = {
-		Load_Timeout = 60,
+		Load_Timeout = 120,
 
 		NoclipDetection = true,
 		BtoolsDetection = false,
