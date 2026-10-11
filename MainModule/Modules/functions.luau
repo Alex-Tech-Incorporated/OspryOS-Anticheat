@@ -202,6 +202,8 @@ return function (OspryAC)
 		
 		--// Kicks a Player from the Game
 		Kick = function(Plr : Player, Reason : string, ModMessage : string, displayOverride : boolean)
+			if not Plr then return end
+			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
 			local showReason = if displayOverride then true
@@ -235,6 +237,9 @@ return function (OspryAC)
 		--// Issues a Warning to a Player
 		-- The "DisplayReason" boolean will Override Behavior.ShowKickReason for this a warning.
 		Warn = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
+			if not Plr then return end
+			
+			--// Check if Warnings are enabled
 			if not Config.Behavior.Warnings then
 				--// Kick Player
 				OspryAC.functions.Kick(
