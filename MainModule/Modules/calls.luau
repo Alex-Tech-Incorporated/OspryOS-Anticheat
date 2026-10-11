@@ -4,7 +4,12 @@
 return function (OspryAC)
 	--// locals
 	--// Services
+	local Players = game:GetService("Players")
 	local RunService = game:GetService("RunService")
+	
+	--// OspryAC
+	local Config = OspryAC.Config
+	local Data = OspryAC.Data
 	
 	--// calls
 	-- All of these get set once calls Initializes.
@@ -13,20 +18,69 @@ return function (OspryAC)
 	local ClientActions
 	local ClientData
 	
-	--// OspryAC
-	local Config = OspryAC.Config
-	local Data = OspryAC.Data
-	
 	--// Export
 	return {
+		--// Data
+		Requests = {},
+		
 		--// Sends a Command to a Client
 		Send = function(Plr : Player, command : string, ...)
 			ClientRemote:FireClients({Plr}, command, ...)
 		end,
-		
+				
 		--// Sends a Command to all Clients
 		SendAll = function(command : string, ...)
 			ClientRemote:FireAllClients(command, ...)
+		end,
+		
+		--// Sends a Get Request to the Client of a Player
+		Get = function(Plr : Player, Timeout : number, Request : string, ...)
+			--// Generate Request and ID
+			local RequestID = tostring(Plr.UserId)
+			OspryAC.calls.Requests[RequestID] = OspryAC.Signal.new()
+			
+			--// locals
+			local end_time = os.clock() + (Timeout or 10)
+			local returned_Data = nil
+			
+			--// Connections
+			local return_signal = OspryAC.calls.Requests[RequestID]:Connect(function(...)
+				returned_Data = {...}
+			end)
+			
+			local Player_Removing = Players.PlayerRemoving:Connect(function(Player : Player)
+				if Plr == Player then returned_Data = {} end
+			end)
+			
+			--// Send Request
+			OspryAC.calls.Send(Plr, "Get", Request, ...)
+			
+			repeat task.wait(1) until os.clock() > end_time or returned_Data ~= nil
+			
+			--// Disconnect Events
+			return_signal:Disconnect()
+			Player_Removing:Disconnect()
+			OspryAC.calls.Requests[RequestID] = nil
+			
+			--// Export
+			return table.unpack(returned_Data or {})
+		end,
+		
+		--// Attempts to check if a Client loaded
+		Is_ClientLoaded = function(Plr : Player): boolean
+			--// locals
+			local Timeout = RunService:IsStudio() and 1000 or Config.ClientSide.Load_Timeout
+			local end_time = os.time() + Timeout
+
+			--// Check if the Client already loaded
+			if Data.System.Client_Stats[Plr.UserId] == "Complete" then
+				return true
+			end
+
+			--// Wait for Client to Complete loading...
+			repeat task.wait(1) until Data.System.Client_Stats[Plr.UserId] == "Complete" or os.time() > end_time
+
+			return Data.System.Client_Stats[Plr.UserId] == "Complete"
 		end,
 		
 		--// Initiates the calls Module
@@ -79,7 +133,7 @@ return function (OspryAC)
 			ClientData:OnServerInvoke(function(Request, DataType : string, Token : number)
 				--// locals
 				local Plr = Request.Client
-				local DataReq = OspryAC.calls.Requests[DataType]
+				local DataReq = OspryAC.calls.Returns[DataType]
 				OspryAC:debug(`Got Request from {Plr.Name} | {DataType}`)
 				
 				--// Check if DataType is valid
@@ -97,23 +151,6 @@ return function (OspryAC)
 					return Request:Raise("The Server has recieved an invalid datatype.")
 				end
 			end)
-		end,
-		
-		--// Attempts to check if a Client loaded
-		Is_ClientLoaded = function(Plr : Player): boolean
-			--// locals
-			local Timeout = RunService:IsStudio() and 1000 or Config.ClientSide.Load_Timeout
-			local end_time = os.time() + Timeout
-			
-			--// Check if the Client already loaded
-			if Data.System.Client_Stats[Plr.UserId] == "Complete" then
-				return true
-			end
-			
-			--// Wait for Client to Complete loading...
-			repeat task.wait(1) until Data.System.Client_Stats[Plr.UserId] == "Complete" or os.time() > end_time
-			
-			return Data.System.Client_Stats[Plr.UserId] == "Complete"
 		end,
 		
 		
@@ -151,6 +188,19 @@ return function (OspryAC)
 				--// Set System
 				Data.System.Client_Stats[Plr.UserId] = "Complete"
 				OspryAC:debug(`Client loaded, {Plr.Name}`)
+				
+				-- Add some Client check logic here...
+			end,
+			
+			--// Command for the Client to return requested data
+			Client_Return = function(Plr : Player, ...)
+				local UserId = tostring(Plr.UserId)
+				local Request = OspryAC.calls.Requests[UserId]
+				if not Request then return end
+				OspryAC:debug(`Got Data return from Request ID: {Plr.UserId} | {...}`)
+				
+				--// Send Signal
+				OspryAC.calls.Requests[UserId]:Fire(...)
 			end,
 		},
 		
@@ -214,9 +264,9 @@ return function (OspryAC)
 			end,
 		},
 		
-		--// Client Requests
-		-- Requests for the "Get" RemoteFunction
-		Requests = {
+		--// Client Returns
+		-- Data returns for the "Get" RemoteFunction
+		Returns = {
 			--// Config Variables for the Client
 			config = function(Plr : Player, recvToken : number)
 				--// locals

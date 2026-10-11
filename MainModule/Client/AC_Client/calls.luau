@@ -136,6 +136,23 @@ return function (Client)
 			DisplayGui = function(GuiType : string, ...)
 				Client.Gui.Actions[GuiType](...)
 			end,
+			
+			--// Allows to the Server to access Returns from the Client
+			Get = function(Request : string, ...)
+				--// locals
+				local Return = Client.calls.Returns[Request]
+				
+				--// Send to Client
+				Client.calls.Send("Client_Return", Return(...))
+			end,
+		},
+		
+		--// A list of Returnables that the Server could request
+		Returns = {
+			--// Pong!
+			Ping = function()
+				return "Pong!"
+			end,
 		},
 	}
 end

@@ -30,6 +30,9 @@ local Client = MainModule.Client
 local Modules = MainModule.Modules
 local Dependencies = MainModule.Dependencies
 
+--// GoodSignal
+local Signal = require(Modules.GoodSignal)
+
 --// OspryOS Anticheat
 local OspryOS_Anticheat = {
 	--// Directories
@@ -37,8 +40,9 @@ local OspryOS_Anticheat = {
 	Modules = Modules,
 	Dependencies = Dependencies,
 	
-	--// Remotes Container
+	--// Client related
 	Remotes = nil,
+	Signal = Signal,
 	
 	--// Configuration
 	Config = require(Server.Base_Config),
