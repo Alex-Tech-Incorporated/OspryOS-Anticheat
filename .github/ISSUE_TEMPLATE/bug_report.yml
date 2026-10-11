@@ -6,7 +6,7 @@ type: bug
 body:
   - type: markdown
     attributes:
-      value: "Before creating a Bug Report, please Update the Anticheat first, and check issues if the Bug has already been reported."
+      value: "Before creating a Bug Report, please update the Anticheat first, and check issues if the Bug has already been reported."
   
   - type: dropdown
     id: version_channel
@@ -14,7 +14,7 @@ body:
       label: Version Channel
       options:
         - Stable (Default)
-        - Canary
+        - Repository (Compiled)
       default: 0
     validations:
       required: true
