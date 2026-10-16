@@ -59,21 +59,33 @@ return function (OspryAC)
 				--// Final Client check
 				local Client_Loaded = OspryAC.calls.Is_ClientLoaded(Plr)
 				if not Client_Loaded then
-					Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
-						`[OspryOS Anticheat]`
-						..`\nYour Client has timed out while loading, please rejoin!`
-					)
-					
-					--// Send to Webhook
-					OspryAC.HTTP.SendKickToWebhook(
-						Plr,
-						"Your Client has timed out while loading, please rejoin!",
-						`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s)`
-					)
+					if Config.ClientSide.Punish_Timeouts then
+						-- TODO: Add Whitelist checks
+						--// Kick
+						Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
+							`[OspryOS Anticheat]`
+								..`\nYour Client has timed out while loading, please rejoin!`
+						)
+
+						--// Send to Webhook
+						OspryAC.HTTP.SendKickToWebhook(
+							Plr,
+							"Your Client has timed out while loading, please rejoin!",
+							`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s)`
+						)
+						
+					else
+						--// Log
+						OspryAC:warn(`{Plr.Name}'s Client has timed out while loading.`)
+						OspryAC.HTTP.SendLog(
+							{title = "Client timed-out", log = `{Plr.Name}'s Client has timed out while loading ({Config.ClientSide.Load_Timeout}s)`},
+							{title = "Network Ping", log = Plr:GetNetworkPing()}
+						)
+					end
 				end
 				
 				--// Complete
-				OspryAC:debug(`{Plr.Name}'s Client has loaded, initialization complete.`)
+				OspryAC:debug(`{Plr.Name}'s Client has {Client_Loaded and `loaded, initialization complete.` or `failed to load, initialization incomplete.`}`)
 			end)
 			
 			--// Connection for the Anticheat to cleanup Player Data as soon as the Player leaves

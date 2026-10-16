@@ -197,6 +197,40 @@ return function (OspryAC)
 			]]
 		end,
 		
+		--// Sends a Log to a Webhook
+		SendLog = function(...)
+			--// locals
+			local Fields = {}
+			local GameName = GetGameName()
+			
+			--// Add Fields
+			for Index, Value in ipairs({...}) do
+				if #Fields >= 24 then break end -- Leaves space for the Game's Name
+				
+				--// Data
+				local Title = Value.title and tostring(Value.title) or `Log {Index}`
+				local Text = Value.log and tostring(Value.log) or tostring(Value)
+				
+				--// Add Field
+				table.insert(Fields, {
+					name = Title,
+					value = Text,
+					inline = false,
+				})
+			end
+			
+			--// Add Game
+			table.insert(Fields, {
+				name = "Game",
+				value = GameName,
+				inline = false,
+			})
+			OspryAC:debug(`Field Data:`, Fields)
+			
+			--// Send to Webhook
+			SendPayload(nil, Data.HTTP.LogColor, Fields)
+		end,
+		
 		
 		
 		--// Initiates the HTTP Module
@@ -237,7 +271,7 @@ return function (OspryAC)
 				else
 					--// Set Secret
 					HTTP.HTTP_Secret = tostring(result) or nil
-					OspryAC:debug(`Found HTTP Secret?`)
+					OspryAC:debug(`Found HTTP Secret? ({HTTP.Secret_Key})`)
 				end
 			end
 			

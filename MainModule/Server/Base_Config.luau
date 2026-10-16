@@ -6,7 +6,8 @@ return {
 
 	ClientSide = {
 		Load_Timeout = 120,
-
+		Punish_Timeouts = true,
+		
 		NoclipDetection = true,
 		BtoolsDetection = false,
 		GuiDetection = false,

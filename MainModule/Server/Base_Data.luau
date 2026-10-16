@@ -24,12 +24,13 @@ return {
 	HTTP = {
 		KickColor = 16711680,
 		WarnColor = 16744192,
+		LogColor = 3168504,
 
 		GenerateEmbed = function(Plr : Player, Color : number, Fields : any)
 			return {
 				embeds = {{
 					title = "OspryOS Anticheat",
-					description = "@"..Plr.Name.." ("..Plr.UserId..")",
+					description = Plr and `@{Plr.Name} ({Plr.UserId})` or `System log`,
 					color = Color,
 					fields = Fields,
 				}}
