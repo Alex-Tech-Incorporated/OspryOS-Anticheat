@@ -61,17 +61,18 @@ return function (OspryAC)
 				if not Client_Loaded then
 					if Config.ClientSide.Punish_Timeouts then
 						-- TODO: Add Whitelist checks
-						--// Kick
-						Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
-							`[OspryOS Anticheat]`
-								..`\nYour Client has timed out while loading, please rejoin!`
-						)
-
+						
 						--// Send to Webhook
 						OspryAC.HTTP.SendKickToWebhook(
 							Plr,
 							"Your Client has timed out while loading, please rejoin!",
-							`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s)`
+							`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s). Network Ping: {Plr:GetNetworkPing()}`
+						)
+						
+						--// Kick
+						Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
+							`[OspryOS Anticheat]`
+								..`\nYour Client has timed out while loading, please rejoin!`
 						)
 						
 					else
