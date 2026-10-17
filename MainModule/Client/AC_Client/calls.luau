@@ -88,7 +88,7 @@ return function (Client)
 					script.Parent.Name = game:GetService("HttpService"):GenerateGUID(true)
 					
 					--// Hide Client
-					getfenv().script.Parent:Destroy()
+					-- getfenv().script.Parent:Destroy() -- Potentially causing unintended timeouts
 					getfenv().script.Parent = nil
 				end
 
@@ -98,6 +98,13 @@ return function (Client)
 				
 				--// Lock Proxy
 				coroutine.wrap(function()
+					--// Freeze Config and Data
+					table.freeze(Client.Config)
+					table.freeze(Client.Data)
+					table.freeze(Client.Data.NoclipConfig)
+					table.freeze(Client.Data.WhitelistedGuis)
+					Client:debug(`Froze Config and Data Tables.`)
+					
 					--[[ -- These cause issues with Client behavior, so they will remain unused.
 					ProxyTable.__newindex = nil
 					ProxyTable.__concat = nil
@@ -111,13 +118,6 @@ return function (Client)
 					
 					Client:debug(`Metatable locked.`)
 					]]
-					
-					--// Freeze Config and Data
-					table.freeze(Client.Config)
-					table.freeze(Client.Data)
-					table.freeze(Client.Data.NoclipConfig)
-					table.freeze(Client.Data.WhitelistedGuis)
-					Client:debug(`Froze Config and Data Tables.`)
 				end)()
 				
 				--// Initialize Modules

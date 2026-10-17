@@ -80,7 +80,7 @@ return function (OspryAC)
 						OspryAC:warn(`{Plr.Name}'s Client has timed out while loading.`)
 						OspryAC.HTTP.SendLog(
 							{title = "Client timed-out", log = `{Plr.Name}'s Client has timed out while loading ({Config.ClientSide.Load_Timeout}s)`},
-							{title = "Network Ping", log = Plr:GetNetworkPing()}
+							{title = "Response time (Network Ping)", log = Plr:GetNetworkPing()}
 						)
 					end
 				end
