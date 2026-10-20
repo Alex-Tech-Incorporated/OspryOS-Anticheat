@@ -58,6 +58,8 @@ return function (OspryAC)
 				
 				--// Final Client check
 				local Client_Loaded = OspryAC.calls.Is_ClientLoaded(Plr)
+				if not Plr.Parent then return end
+				
 				if not Client_Loaded then
 					if Config.ClientSide.Punish_Timeouts then
 						-- TODO: Add Whitelist checks
@@ -80,7 +82,7 @@ return function (OspryAC)
 						OspryAC:warn(`{Plr.Name}'s Client has timed out while loading.`)
 						OspryAC.HTTP.SendLog(
 							{title = "Client timed-out", log = `{Plr.Name}'s Client has timed out while loading ({Config.ClientSide.Load_Timeout}s)`},
-							{title = "Response time (Network Ping)", log = Plr:GetNetworkPing()}
+							{title = "Network Ping", log = Plr:GetNetworkPing()}
 						)
 					end
 				end
