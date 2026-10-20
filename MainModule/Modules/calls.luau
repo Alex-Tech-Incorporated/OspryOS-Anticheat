@@ -69,7 +69,7 @@ return function (OspryAC)
 		--// Attempts to check if a Client loaded
 		Is_ClientLoaded = function(Plr : Player): boolean
 			--// locals
-			local Timeout = RunService:IsStudio() and 1000 or Config.ClientSide.Load_Timeout
+			local Timeout = (RunService:IsStudio() and not Config.Development.DevMode) and 1000 or Config.ClientSide.Load_Timeout
 			local end_time = os.time() + Timeout
 
 			--// Check if the Client already loaded
@@ -78,7 +78,7 @@ return function (OspryAC)
 			end
 
 			--// Wait for Client to Complete loading...
-			repeat task.wait(1) until Data.System.Client_Stats[Plr.UserId] == "Complete" or os.time() > end_time
+			repeat task.wait(1) until Data.System.Client_Stats[Plr.UserId] == "Complete" or os.time() > end_time or not Plr.Parent
 
 			return Data.System.Client_Stats[Plr.UserId] == "Complete"
 		end,
@@ -100,7 +100,10 @@ return function (OspryAC)
 				
 				--// Command
 				local func = OspryAC.calls.Commands[command]
-				if not func then return end
+				if not func then
+					OspryAC:warn("Invalid function recieved", command, "from", Plr.Name)
+					return
+				end
 				
 				--// Trigger
 				func(Plr, ...)
