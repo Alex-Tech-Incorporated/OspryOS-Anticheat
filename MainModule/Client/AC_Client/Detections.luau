@@ -92,9 +92,9 @@ return function (Client)
 					-- Connections --
 					Plr.CharacterAdded:Connect(CheckForBtools)
 
-					-- Wait for Character --
-					if not Plr.Character then Plr.CharacterAdded:Wait() end
-					CheckForBtools(Plr.Character)
+					-- Incase the character was added before we connected to CharacterAdded --
+					if Plr.Character then CheckForBtools(Plr.Character) end
+					--CheckForBtools(Plr.Character)
 				end)()
 			end
 
