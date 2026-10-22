@@ -34,11 +34,11 @@ return function (OspryAC)
 				local currentWarns = data.System.Warnings[Plr.UserId] or 0
 				
 				--// Export
-				return currentWarns
+				return table.clone(currentWarns) --Clone the table to prevent modification to propagate
 			end
 			
 			--// Complete
-			_G.OspryAC = G_API
+			_G.OspryAC = table.freeze(G_API) --Freeze to prevent modifications
 			OspryAC:debug(`_G API initialized.`)
 		end,
 	}
