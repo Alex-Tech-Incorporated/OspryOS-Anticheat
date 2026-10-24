@@ -20,6 +20,7 @@ return function (OspryAC)
 	--// Internal HTTP table
 	local HTTP = {
 		--// Main
+		Enabled = false,
 		Use_Secret = false,
 		
 		--// API
@@ -108,8 +109,8 @@ return function (OspryAC)
 		end,
 		
 		--// Sends a Webhook to Staff Members if a Player has been warned by the Anticheat
-		SendWarnToWebhook = function(Plr : Player, Reason : string, ModMessage : string)
-			if not Behavior.SendToWebhook then return end
+		SendWarn = function(Plr : Player, Reason : string, ModMessage : string)
+			if not HTTP.Enabled then return end
 			
 			--// Get Game Name
 			local GameName = GetGameName()
@@ -123,38 +124,11 @@ return function (OspryAC)
 			
 			--// Send to Webhook
 			SendPayload(Plr, HTTP_Data.WarnColor, Fields)
-			
-			--[[
-			--// Payload
-			local Payload = GenerateEmbed(
-				Plr,
-				HTTP_Data.WarnColor,
-				Fields
-			)
-			
-			--// Attempt to send
-			local success, response = pcall(function()
-				HTTPService:PostAsync(
-					OspryAC.Config.Behavior.Webhook_URL,
-					HTTPService:JSONEncode(Payload),
-					Enum.HttpContentType.ApplicationJson
-				)
-			end)
-			
-			--// Check HTTP Response
-			if not success then
-				OspryAC:warn("HTTP has failed to sent the Payload to a Webhook.")
-				OspryAC:warn(`Got: {response}`)
-				
-			else
-				OspryAC:debug("Webhook sent?")
-			end
-			]]
 		end,
 		
 		--// Sends a Webhook to Staff Members if a Player has been kicked by the Anticheat
-		SendKickToWebhook = function(Plr : Player, Reason : string, ModMessage : string)
-			if not Behavior.SendToWebhook then return end
+		SendKick = function(Plr : Player, Reason : string, ModMessage : string)
+			if not HTTP.Enabled then return end
 			
 			--// Get Game Name
 			local GameName = GetGameName()
@@ -168,33 +142,6 @@ return function (OspryAC)
 			
 			--// Send to Webhook
 			SendPayload(Plr, HTTP_Data.KickColor, Fields)
-			
-			--[[
-			--// Payload
-			local Payload = GenerateEmbed(
-				Plr,
-				HTTP_Data.KickColor,
-				Fields
-			)
-
-			--// Attempt to send
-			local success, response = pcall(function()
-				HTTPService:PostAsync(
-					OspryAC.Config.Behavior.Webhook_URL,
-					HTTPService:JSONEncode(Payload),
-					Enum.HttpContentType.ApplicationJson
-				)
-			end)
-
-			--// Check HTTP Response
-			if not success then
-				OspryAC:warn("HTTP has failed to sent the Payload to a Webhook.")
-				OspryAC:warn(`Got: {response}`)
-
-			else
-				OspryAC:debug("Webhook sent?")
-			end
-			]]
 		end,
 		
 		--// Sends a Log to a Webhook
@@ -210,12 +157,13 @@ return function (OspryAC)
 				--// Data
 				local Title = Value.title and tostring(Value.title) or `Log {Index}`
 				local Text = Value.log and tostring(Value.log) or tostring(Value)
+				local SameLine = Value.inline == true
 				
 				--// Add Field
 				table.insert(Fields, {
 					name = Title,
 					value = Text,
-					inline = false,
+					inline = SameLine,
 				})
 			end
 			
@@ -244,6 +192,7 @@ return function (OspryAC)
 			end
 			
 			--// Set if Secret should be used
+			HTTP.Enabled = true
 			HTTP.Use_Secret = Behavior.Use_HTTPSecret
 			
 			--// Check if Secret should be used
