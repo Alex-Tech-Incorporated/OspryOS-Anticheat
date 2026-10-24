@@ -35,6 +35,21 @@ return {
 		HTTP_SecretKey = "CHANGE_ME",
 	},
 	
+	Punishments = {
+		["HumanoidCheck"] = "Kick",
+		["MagnitudeCheck"] = "Warn",
+		
+		["Noclip"] = "Kick",
+		["Btools"] = "Kick",
+		["Gui"] = "Log",
+		["Dex"] = "Kick",
+		["AWP"] = "Kick",
+		
+		["Load_Timeout"] = "Log",
+
+		["Unknown"] = "Kick",
+	},
+	
 	Whitelists = {
 		AdonisWhitelist = false,
 		Min_Level = 100,

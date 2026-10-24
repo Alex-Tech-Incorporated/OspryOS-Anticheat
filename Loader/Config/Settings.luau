@@ -45,6 +45,26 @@ return {
 		HTTP_SecretKey = "CHANGE_ME", -- The Key for the HTTP Secret so the Anticheat can find it
 	},
 	
+	--// Tells the Anticheat what it should do if a Detection is tripped
+	Punishments = {
+		--// Server-Sided detections
+		["HumanoidCheck"] = "Kick",
+		["MagnitudeCheck"] = "Warn",
+
+		--// Client-Sided detections
+		["Noclip"] = "Kick",
+		["Btools"] = "Kick",
+		["Gui"] = "Log",
+		["Dex"] = "Kick",
+		["AWP"] = "Kick",
+		
+		--// System
+		["Load_Timeout"] = "Log",
+
+		--// Fallback
+		["Unknown"] = "Kick", -- Used if an unknown detection name is sent to the Server
+	},
+	
 	--// Whitelist Settings and Options
 	Whitelists = {
 		--// Options
