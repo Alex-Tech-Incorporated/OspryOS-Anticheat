@@ -45,7 +45,6 @@ return {
 
 	Development = {
 		DebugMode = false,
-		DevMode = false, --Forces the code to pretend RunService:IsStudio() is false [exceptions are for critical things]
 	},
 	
 	--// Anticheat specific
