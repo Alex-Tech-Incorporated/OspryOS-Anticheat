@@ -3,7 +3,7 @@ return function (Client)
 	return {
 		--// RemoteEvents
 		Event = Client.Remotes("OspryAC"),
-		Action = Client.Remotes("Actions"),
+		Punish = Client.Remotes("Punish"),
 		GetRemote = Client.Remotes("Get"),
 
 		--// Sends a Request to the Server
@@ -12,9 +12,9 @@ return function (Client)
 			Client.calls.Event:FireServer(ServerRequest, ...)
 		end,
 		
-		--// Sends an Action to the Server
-		Send_Action = function(Action : string , ...)
-			Client.calls.Action:FireServer(Action, ...)
+		--// Sends Punish data to the Server
+		Send_Punish = function(Detection : string, Reason : string, ModMessage : string)
+			Client.calls.Punish:FireServer(Client.Token, Detection, Reason, ModMessage)
 		end,
 
 		--// Gets ServerData by using the Get RemoteFunction
@@ -88,7 +88,7 @@ return function (Client)
 					script.Parent.Name = game:GetService("HttpService"):GenerateGUID(true)
 					
 					--// Hide Client
-					-- getfenv().script.Parent:Destroy() -- Potentially causing unintended timeouts
+					-- getfenv().script.Parent:Destroy() -- I don't think this messes with anything, going to keep it like this though.
 					getfenv().script.Parent = nil
 				end
 

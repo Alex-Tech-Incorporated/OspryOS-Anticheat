@@ -93,14 +93,9 @@ end
 
 -- Client functions --
 
---// Sends Kick Data to the Server
-function Client:Warn(Reason : string, ModMessage : string)
-	Client.calls.Send_Action("Warn", Reason, ModMessage, Client.Token)
-end
-
---// Sends Kick Data to the Server
-function Client:Kick(Reason : string, ModMessage : string)
-	Client.calls.Send_Action("Kick", Reason, ModMessage, Client.Token)
+--// Sends a Punish request to the Server
+function Client:Punish(Detection : string, Reason : string, ModMessage : string)
+	Client.calls.Send_Punish(Detection, Reason, ModMessage)
 end
 
 
