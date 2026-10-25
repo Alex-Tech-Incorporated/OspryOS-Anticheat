@@ -12,6 +12,8 @@ Please check out the [Setup Guide](https://github.com/Alex-Tech-Incorporated/Osp
 * Magnitude change detection (Anti-Fly)
 
 ### Client-Sided checks
+* Client load timeout
+  * Timeout can be configured
 * Noclip detection
   * Raycasting
   * Aggressive (RootPart checks)
@@ -22,12 +24,15 @@ Please check out the [Setup Guide](https://github.com/Alex-Tech-Incorporated/Osp
   * **This feature is deprecated, and will be removed in the future**
 
 ### Behavior
-* Warnings
-  * Certain detections Warn the Player, before they get kicked
 * Hiding Kick Reasons
   * This feature can be overwritten by usage of the _G API or internal function calls.
+  * You can also exclude certian detections from this Rule
 * Sending information to Webhooks
   * Also supports HTTP Secrets
+
+### Punishments
+* Punishments of all Anticheat Modules are configurable
+* You can either Kick a Player, Warn them or log the trip to a Webhook
 
 ### Whitelists
 * Adonis Whitelist
