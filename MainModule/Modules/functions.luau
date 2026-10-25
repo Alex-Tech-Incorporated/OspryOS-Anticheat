@@ -13,6 +13,8 @@ return function (OspryAC)
 	local Config = OspryAC.Config
 	local Data = OspryAC.Data
 	
+	local Punishments = Config.Punishments
+	
 	--// Exported functions
 	return {
 		--// Initiates the functions module
@@ -61,30 +63,12 @@ return function (OspryAC)
 				if not Plr.Parent then return end
 				
 				if not Client_Loaded then
-					if Config.ClientSide.Punish_Timeouts then
-						-- TODO: Add Whitelist checks
-						
-						--// Send to Webhook
-						OspryAC.HTTP.SendKickToWebhook(
-							Plr,
-							"Your Client has timed out while loading, please rejoin!",
-							`The Player's Client has exceeded the timeout window of {Config.ClientSide.Load_Timeout} second(s). Network Ping: {Plr:GetNetworkPing()}`
-						)
-						
-						--// Kick
-						Plr:Kick( -- I am going to use this so the "You have been Kicked for Exploiting" does not show up.
-							`[OspryOS Anticheat]`
-								..`\nYour Client has timed out while loading, please rejoin!`
-						)
-						
-					else
-						--// Log
-						OspryAC:warn(`{Plr.Name}'s Client has timed out while loading.`)
-						OspryAC.HTTP.SendLog(
-							{title = "Client timed-out", log = `{Plr.Name}'s Client has timed out while loading ({Config.ClientSide.Load_Timeout}s)`},
-							{title = "Network Ping", log = Plr:GetNetworkPing()}
-						)
-					end
+					--// Punish
+					OspryAC.functions.Punish(
+						"Load_Timeout", Plr,
+						"Client has timed out while loading",
+						`Network Ping: {Plr:GetNetworkPing()}`
+					)
 				end
 				
 				--// Complete
@@ -201,8 +185,7 @@ return function (OspryAC)
 			if not Config.Behavior.Warnings then return end
 			
 			--// locals
-			local showReason = if displayOverride then true
-				else Config.Behavior.ShowKickReason
+			local showReason = displayOverride == true
 			
 			--// Send to Client
 			OspryAC.calls.Send(
@@ -215,38 +198,74 @@ return function (OspryAC)
 		
 		
 		
+		--// Punishes a Player based on the Detection tripped
+		Punish = function(Detection : string, Plr : Player, Reason : string, ModMessage : string)
+			--// locals
+			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
+			local Punishment = typeof(Detection) == "string" and Punishments[Detection] or Punishments["Unknown"]
+			local Type = Punishment:lower()
+			
+			local showReason = table.find(Config.Behavior.AlwaysShowReason, Detection) and true or Config.Behavior.ShowKickReason
+			
+			OspryAC:debug(
+				`Got punish request for {Plr.Name}`
+				..`\nDetection: {Detection}`
+				..`\nReason shown to User: {showReason}`
+				..`\nType: {Type}`
+			)
+			if isWhitelisted then return end
+			
+			--// Check Punishment Type
+			if Type == "kick" then
+				OspryAC.functions.Kick(Plr, Reason, ModMessage, showReason)
+				
+			elseif Type == "warn" then
+				OspryAC.functions.Warn(Plr, Reason, ModMessage, showReason)
+				
+			elseif Type == "log" then
+				OspryAC.HTTP.SendLog(
+					{title = "Player", log = `{Plr.Name} ({Plr.UserId})`},
+					{title = "Reason", log = Reason},
+					{title = "Moderator Message", log = ModMessage}
+				)
+				
+			else
+				OspryAC:warn(`The Server recieved an invalid Punishment type while trying to process the Punishment of {Plr.Name}.`)
+				OspryAC:warn(`Supported Types are, "kick", "warn" and "log".`)
+			end
+		end,
+		
 		--// Kicks a Player from the Game
-		Kick = function(Plr : Player, Reason : string, ModMessage : string, displayOverride : boolean)
+		Kick = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
 			if not Plr then return end
 			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
-			local showReason = if displayOverride then true
-				else Config.Behavior.ShowKickReason
+			local showReason = DisplayReason == true
 			if isWhitelisted then return end
 			
 			--// Send to Webhook and Announce
-			OspryAC.HTTP.SendKickToWebhook(Plr, Reason, ModMessage)
+			OspryAC.HTTP.SendKick(Plr, Reason, ModMessage)
 			OspryAC.functions.AnnounceToClients(Plr, Reason)
 			
-			--// Kick
-			if not Config.Development.DebugMode then
-				Plr:Kick(
-					"[OspryOS Anticheat]"
-					.."\nYou have been kicked for Exploiting"
-					..if showReason then "\n\nReason:\n"..Reason else ""
-				)
-				
-				--// Print
-				OspryAC:warn(`{Plr.Name} has been kicked. Reason: {Reason}`)
-			else
-				--// Debug Print
+			--// Check for DebugMode
+			if Config.Development.DebugMode then
+				-- Do I even need to explain this?
 				OspryAC:debug(
-					`\n{Plr.Name} ({Plr.UserId})`
-					..`\n{Reason}`
-					..`\n{ModMessage}`
+					`Punishment results for kick:`
+					.. `\n{Plr.Name}`
+					.. `\n{Reason}`
+					.. `\n{ModMessage}`
 				)
+				return
 			end
+			
+			--// Get out.
+			Plr:Kick(
+				"[OspryOS Anticheat]"
+				.."\nYou have been presumed to be Exploiting"
+				..if showReason then `\n\n{Reason}` else ""
+			)
 		end,
 		
 		--// Issues a Warning to a Player
@@ -254,23 +273,13 @@ return function (OspryAC)
 		Warn = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
 			if not Plr then return end
 			
-			--// Check if Warnings are enabled
-			if not Config.Behavior.Warnings then
-				--// Kick Player
-				OspryAC.functions.Kick(
-					Plr,
-					Reason,
-					ModMessage
-				)
-				return
-			end
-			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
 			local currentWarns = Data.System.Warnings[Plr.UserId] or 0
 			if isWhitelisted then return end
 			
-			--// Check Warnings
+			--// Check if User has exceeded the Maximum Warnings set
+			-- Back to lobby!
 			if currentWarns >= Config.Behavior.Max_Warns then
 				OspryAC.functions.Kick(
 					Plr,
@@ -278,19 +287,19 @@ return function (OspryAC)
 					`Player has exceeded the Maximum Warnings set ({Config.Behavior.Max_Warns} Warnings)`,
 					true
 				)
-				
-			else
-				--// Issue Warning
-				Data.System.Warnings[Plr.UserId] = currentWarns +1
-				OspryAC:debug(`{Plr.Name}: {Data.System.Warnings[Plr.UserId]}/{Config.Behavior.Max_Warns}`)
-				
-				--// Send to Webhook
-				OspryAC.HTTP.SendWarnToWebhook(Plr, Reason, ModMessage)
-				OspryAC.functions.NotifyWarning(Plr, Reason, DisplayReason)
-				
-				--// Prints
-				OspryAC:debug(`{Plr.Name} has been issued a Warning.`)
+				return
 			end
+			
+			--// Add a Warning
+			Data.System.Warnings[Plr.UserId] = currentWarns +1
+			OspryAC:debug(`{Plr.Name}: {Data.System.Warnings[Plr.UserId]}/{Config.Behavior.Max_Warns}`)
+
+			--// Send to Webhook and Notify
+			OspryAC.HTTP.SendWarn(Plr, Reason, ModMessage)
+			OspryAC.functions.NotifyWarning(Plr, Reason, DisplayReason)
+
+			--// Prints
+			OspryAC:debug(`{Plr.Name} has been issued a Warning.`)
 		end,
 	}
 end

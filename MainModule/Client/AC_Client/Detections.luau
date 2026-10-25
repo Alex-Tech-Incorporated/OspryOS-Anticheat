@@ -28,7 +28,11 @@ return function (Client)
 								else
 									--// Destroy Gui and Warn Player (or kick, depending on Settings)
 									v:Destroy() -- Deletes the Detected Gui
-									Client:Warn("Unidentified Gui detected", "Player had a Gui called '"..v.Name.."' inserted into their PlayerGui.")
+									Client:Punish(
+										"Gui",
+										"Unidentified Gui detected",
+										`Player had a Gui called "{v.Name}" inserted into their PlayerGui.`
+									)
 								end
 							end
 						end
@@ -64,7 +68,7 @@ return function (Client)
 						-- Since break cannot be used in the coroutines below, we instead call the kick like this so we can exit the loop without flooding the remote
 						-- Is it obvious yet that this is a part of old 2.0 Code?
 						if Flagged then
-							Client:Kick("Btools detected", "Player has attempted to use Btools")
+							Client:Punish("Btools", "Btools detected", "Player has attempted to use Btools")
 							break
 						end
 
@@ -159,9 +163,9 @@ return function (Client)
 
 											if VerifiedPrecision then
 												ViolationCounter += 1
-												Client:Debug("Predicted Noclip, ViolationCounter is now at", ViolationCounter)
+												Client:debug(`redicted Noclip, ViolationCounter is now at {ViolationCounter}`)
 											else
-												Client:Debug("Did not Predict Noclip")
+												Client:debug("Did not Predict Noclip")
 											end	
 										end)()
 									end)
@@ -174,11 +178,19 @@ return function (Client)
 
 									--// Check for Collision
 									if RootPart.CanCollide == false then
-										Client:Kick("Noclip detected", `HumanoidRootPart does not have CanCollide enabled`)
+										Client:Punish(
+											"Noclip",
+											"Noclip detected (Agressive Validation)",
+											`HumanoidRootPart does not have CanCollide enabled`
+										)
 										return
 
 									elseif not RootPart then
-										Client:Kick("HumanoidRootPart not found or missing", "The HumanoidRootPart of the Player is missing or was not found.")
+										Client:Punish(
+											"Noclip",
+											"HumanoidRootPart not found or missing",
+											`The HumanoidRootPart of the Player is missing or was not found.`
+										)
 										return
 									end
 								end
@@ -186,7 +198,11 @@ return function (Client)
 
 							--// ViolationCounter check
 							if ViolationCounter >  Client.Data.NoclipConfig.MaxAllocatedViolations then
-								Client:Kick("Noclip detected", `Player exceeded { Client.Data.NoclipConfig.MaxAllocatedViolations} violations at Cycle {CycleCounter}`)
+								Client:Punish(
+									"Noclip",
+									"Noclip detected",
+									`Player exceeded {Client.Data.NoclipConfig.MaxAllocatedViolations} violations at Cycle {CycleCounter}`
+								)
 								return
 							end
 
@@ -199,9 +215,9 @@ return function (Client)
 							--// Add to CycleCounter
 							CycleCounter += 1
 						end)
-						
+
 						if not s then
-							Client:Debug("ERROR!!!!!", v)
+							Client:debug("An error has occured with Noclip Detection,", v)
 						end
 					end
 				end)()
@@ -218,7 +234,7 @@ return function (Client)
 					local Chat = game:GetService("Chat")
 					Instance.new("BoolValue", Chat).Name = name -- make it and forget about it
 					--if someone ever deletes this value with code injection then they have a free way to bypass this whole detection ;-;
-					
+
 					Client:debug("Game loaded, Dex Detection loop running.")
 
 					local t = setmetatable({}, {__mode="v"})
@@ -232,7 +248,11 @@ return function (Client)
 							task.wait()
 						end
 						if t[2] ~= nil then
-							Client:Kick("Dex Explorer detected", "Invalid gc behavior detected")
+							Client:Punish(
+								"Dex",
+								"Dex Explorer detected",
+								"Invalid Game.Chat behavior has been detected"
+							)
 							Client:debug("Dex Detection loop killed.")
 							break
 						end
@@ -266,7 +286,11 @@ return function (Client)
 							-- dont punish lag spikes, require 8 fails in a row
 							violations = violations + 1
 							if violations >= 8 then
-								Client:Kick("AWP Injection detected.", "AWP has been detected with decent confidence (r8: "..ratio..").")
+								Client:Punish(
+									"AWP",
+									"AWP Injection detected",
+									`AWP has been detected with decent confidence (r8: {ratio}).`
+								)
 								Client:debug("AWP Detection loop killed.")
 								break
 							end

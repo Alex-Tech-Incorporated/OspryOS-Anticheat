@@ -9,7 +9,6 @@ return {
 	ClientSide = {
 		--// Client Settings
 		Load_Timeout = 120, -- The Time before a Client is counted as "Timed-out" on loading
-		Punish_Timeouts = true, -- Determines if a Player should be kicked if there Client times out
 		
 		--// Basic Detections
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled
@@ -25,10 +24,10 @@ return {
 	Behavior = {
 		--// Gui Settings
 		ShowKickReason = false, -- Shows the Kick reason to the Exploiter and Players if AnnounceKicks is enabled
+		AlwaysShowReason = {"Load_Timeout"}, -- If ShowKickReasons is enabled, you can add the names of detection here to overwrite it
 		AnnounceKicks = false, -- Announces if a Player was kicked to everyone in the Server
 		
 		--// Warnings
-		Warnings = true, -- Makes the Anticheat issue warnings instead of kicking a Player directly for certian Detections
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
 		--// Misc
@@ -43,6 +42,29 @@ return {
 		Use_HTTPSecret = false, -- Uses Roblox's HTTP Secret instead of a URL within the Config
 		HTTP_Secret_BaseURL = "https://discord.com/api/webhooks/", -- The URL to where the Payload gets sent to (Defaults to Discord's Webhook API)
 		HTTP_SecretKey = "CHANGE_ME", -- The Key for the HTTP Secret so the Anticheat can find it
+	},
+	
+	--// Tells the Anticheat what it should do if a Detection is tripped
+	-- These are all supported types, "Kick", "Warn" and "Log"
+	Punishments = {
+		--// Server-Sided detections
+		["HumanoidCheck"] = "Kick",
+		["MagnitudeCheck"] = "Warn",
+
+		--// Client-Sided detections
+		["Noclip"] = "Kick",
+		["Btools"] = "Kick",
+		["Gui"] = "Log",
+		["Dex"] = "Kick",
+		["AWP"] = "Kick",
+		
+		--// System
+		["Load_Timeout"] = "Log",
+		["Invalid_Token"] = "Kick",
+		["Tamper_Attempt"] = "Kick",
+
+		--// Fallback
+		["Unknown"] = "Kick", -- Used if an unknown detection name is sent to the Server
 	},
 	
 	--// Whitelist Settings and Options
