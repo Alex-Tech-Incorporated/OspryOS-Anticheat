@@ -18,6 +18,7 @@ return {
 
 	Behavior = {
 		ShowKickReason = false,
+		AlwaysShowReason = {"Load_Timeout"},
 		AnnounceKicks = false,
 
 		Warnings = true,

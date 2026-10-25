@@ -204,16 +204,23 @@ return function (OspryAC)
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
 			local Punishment = typeof(Detection) == "string" and Punishments[Detection] or Punishments["Unknown"]
 			local Type = Punishment:lower()
-			OspryAC:debug(`Got punish request: {Detection} | {Type}`)
 			
+			local showReason = table.find(Config.Behavior.AlwaysShowReason, Detection) and true or Config.Behavior.ShowKickReason
+			
+			OspryAC:debug(
+				`Got punish request for {Plr.Name}`
+				..`\nDetection: {Detection}`
+				..`\nReason shown to User: {showReason}`
+				..`\nType: {Type}`
+			)
 			if isWhitelisted then return end
 			
 			--// Check Punishment Type
 			if Type == "kick" then
-				OspryAC.functions.Kick(Plr, Reason, ModMessage)
+				OspryAC.functions.Kick(Plr, Reason, ModMessage, showReason)
 				
 			elseif Type == "warn" then
-				OspryAC.functions.Warn(Plr, Reason, ModMessage)
+				OspryAC.functions.Warn(Plr, Reason, ModMessage, showReason)
 				
 			elseif Type == "log" then
 				OspryAC.HTTP.SendLog(
@@ -221,16 +228,20 @@ return function (OspryAC)
 					{title = "Reason", log = Reason},
 					{title = "Moderator Message", log = ModMessage}
 				)
+				
+			else
+				OspryAC:warn(`The Server recieved an invalid Punishment type while trying to process the Punishment of {Plr.Name}.`)
+				OspryAC:warn(`Supported Types are, "kick", "warn" and "log".`)
 			end
 		end,
 		
 		--// Kicks a Player from the Game
-		Kick = function(Plr : Player, Reason : string, ModMessage : string, displayOverride : boolean)
+		Kick = function(Plr : Player, Reason : string, ModMessage : string, DisplayReason : boolean)
 			if not Plr then return end
 			
 			--// locals
 			local isWhitelisted = OspryAC.functions.CheckWhitelists(Plr)
-			local showReason = displayOverride == true
+			local showReason = DisplayReason == true
 			if isWhitelisted then return end
 			
 			--// Send to Webhook and Announce

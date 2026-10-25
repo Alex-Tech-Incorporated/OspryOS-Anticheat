@@ -25,6 +25,7 @@ return {
 	Behavior = {
 		--// Gui Settings
 		ShowKickReason = false, -- Shows the Kick reason to the Exploiter and Players if AnnounceKicks is enabled
+		AlwaysShowReason = {"Load_Timeout"}, -- If ShowKickReasons is enabled, you can add the names of detection here to overwrite it
 		AnnounceKicks = false, -- Announces if a Player was kicked to everyone in the Server
 		
 		--// Warnings
