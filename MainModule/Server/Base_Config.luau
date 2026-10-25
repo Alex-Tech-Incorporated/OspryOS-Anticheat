@@ -47,6 +47,8 @@ return {
 		["AWP"] = "Kick",
 		
 		["Load_Timeout"] = "Log",
+		["Invalid_Token"] = "Kick",
+		["Tamper_Attempt"] = "Kick",
 
 		["Unknown"] = "Kick",
 	},

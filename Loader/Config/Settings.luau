@@ -47,6 +47,7 @@ return {
 	},
 	
 	--// Tells the Anticheat what it should do if a Detection is tripped
+	-- These are all supported types, "Kick", "Warn" and "Log"
 	Punishments = {
 		--// Server-Sided detections
 		["HumanoidCheck"] = "Kick",
@@ -61,6 +62,8 @@ return {
 		
 		--// System
 		["Load_Timeout"] = "Log",
+		["Invalid_Token"] = "Kick",
+		["Tamper_Attempt"] = "Kick",
 
 		--// Fallback
 		["Unknown"] = "Kick", -- Used if an unknown detection name is sent to the Server
