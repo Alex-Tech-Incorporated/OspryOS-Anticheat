@@ -2,7 +2,7 @@
 	<Meta name="ExplicitAutoJoints">true</Meta>
 	<External>null</External>
 	<External>nil</External>
-	<Item class="ModuleScript" referent="RBX0168118D3B2E402EA454DBEA5518313E">
+	<Item class="ModuleScript" referent="RBX4B23F42E1A3B49A89C8075B88A95CD9A">
 		<Properties>
 			<Content name="LinkedSource"><null></null></Content>
 			<ProtectedString name="Source"><![CDATA[--!strict
@@ -380,40 +380,44 @@ return setmetatable({}, {
 		return Remote.get(Id)
 	end :: (any, string) -> (Remote),
 })]]></ProtectedString>
-			<string name="ScriptGuid">{EAC7E701-6CFF-486B-9595-D9961858C4C5}</string>
+			<string name="ScriptGuid">{647F6AA7-D6F3-4F76-8238-AF7C4AC447DF}</string>
 			<BinaryString name="AttributesSerialize"></BinaryString>
 			<SecurityCapabilities name="Capabilities">17996771963439872</SecurityCapabilities>
 			<bool name="DefinesCapabilities">true</bool>
 			<string name="Name">Remotes</string>
+			<BinaryString name="SerializedOverrides"></BinaryString>
 			<int64 name="SourceAssetId">95154450448139</int64>
 			<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 		</Properties>
-		<Item class="RemoteFunction" referent="RBXF1BDC444DF45473BA094A477FFD9F9B3">
+		<Item class="RemoteFunction" referent="RBXE9192AAEC678498595CA394C81B3984F">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 				<bool name="DefinesCapabilities">false</bool>
 				<string name="Name">Get</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
 		</Item>
-		<Item class="RemoteEvent" referent="RBXDFF74799A8B84D71A732F526005F4D8C">
+		<Item class="RemoteEvent" referent="RBX324BB2B7D0C34791803013DFBA2E3493">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 				<bool name="DefinesCapabilities">false</bool>
 				<string name="Name">OspryAC</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>
 		</Item>
-		<Item class="RemoteEvent" referent="RBXEECB80E76EC44E099E978AB5AB8538FC">
+		<Item class="RemoteEvent" referent="RBX07DE3BBD973A46298306410FCD47C8B1">
 			<Properties>
 				<BinaryString name="AttributesSerialize"></BinaryString>
 				<SecurityCapabilities name="Capabilities">0</SecurityCapabilities>
 				<bool name="DefinesCapabilities">false</bool>
-				<string name="Name">Actions</string>
+				<string name="Name">Punish</string>
+				<BinaryString name="SerializedOverrides"></BinaryString>
 				<int64 name="SourceAssetId">-1</int64>
 				<SharedString name="Tags">yuZpQdnvvUBOTYh1jqZ2cA==</SharedString>
 			</Properties>

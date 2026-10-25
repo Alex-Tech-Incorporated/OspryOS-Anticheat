@@ -62,22 +62,9 @@ return function (OspryAC)
 		return Thread
 	end
 	
-	--// Fires the .Kick() function within functions
-	function Server:Kick(Plr : Player, Reason : string, ModMessage : string)
-		functions.Kick(
-			Plr,
-			Reason,
-			ModMessage
-		)
-	end
-	
-	--// Fires the .Warn() function within functions
-	function Server:Warn(Plr : Player, Reason : string, ModMessage : string)
-		functions.Warn(
-			Plr,
-			Reason,
-			ModMessage
-		)
+	--// Sends Punishment data to functions
+	function Server:Punish(Detection : string, Plr : Player, Reason : string, ModMessage : string)
+		functions.Punish(Detection, Plr, Reason, ModMessage)
 	end
 	
 	--// Export
@@ -91,24 +78,15 @@ return function (OspryAC)
 					OspryAC:debug(`Character added, {Plr.Name}`)
 					
 					--// locals
-					local Humanoid = Char:WaitForChild("Humanoid", 120) :: Humanoid
-					local RootPart = Char:WaitForChild("HumanoidRootPart", 120)
+					local Humanoid = Char:WaitForChild("Humanoid") :: Humanoid
+					local RootPart = Char:WaitForChild("HumanoidRootPart")
 					
 					
 					
 					--// Magnitude Check
 					local function CheckMagnitude()
 						if not Settings.ServerSide.MagnitudeChecks then return end
-						
-						--// Check for RootPart
-						if not RootPart then
-							Server:Kick(
-								Plr,
-								`"HumanoidRootPart" not found in Character.`,
-								`Player has no "HumanoidRootPart" within there Character.`
-							)
-							return
-						end
+						if not RootPart then return end
 						
 						--// Get Previous Position and Humanoid State
 						local Prev_Position = RootPart.Position
@@ -136,11 +114,11 @@ return function (OspryAC)
 								--// Ignore if the Player is not in the Air or if the Player died / resetted
 								if Humanoid.FloorMaterial ~= Enum.Material.Air or Humanoid.Health == 0 then return end
 								
-								--// Issue Warning or Kick
-								Server:Warn(
-									Plr,
+								--// Punish
+								Server:Punish(
+									"MagnitudeCheck", Plr,
 									"Abnormal Magnitude changes",
-									`Player has exceeded {Data.MagnitudeChecks.Max_Magnitude} by {tostring(Current_Position.Magnitude)} in {tostring(Data.MagnitudeChecks.CheckTime)} second(s).`
+									`Player has exceeded {Data.MagnitudeChecks.Max_Magnitude} by {tostring(Current_Position.Magnitude)} in {Data.MagnitudeChecks.CheckTime} second(s).`
 								)
 							end
 						end)
@@ -159,10 +137,10 @@ return function (OspryAC)
 							
 							--// Compare States
 							if Data.HumanoidChecks.CheckPlatformStanding and New_State == Enum.HumanoidStateType.PlatformStanding or not isWhitelistedState then
-								--// Kick Player
-								Server:Kick(
-									Plr,
-									"Unathorized Humanoid State",
+								--// Punish
+								Server:Punish(
+									"HumanoidCheck", Plr,
+									"Unauthorized Humanoid State",
 									`Humanoid State has switched from {Prev_State.Value} to {New_State.Value}`
 								)
 							end

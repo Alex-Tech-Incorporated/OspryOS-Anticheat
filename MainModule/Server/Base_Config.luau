@@ -18,6 +18,7 @@ return {
 
 	Behavior = {
 		ShowKickReason = false,
+		AlwaysShowReason = {"Load_Timeout"},
 		AnnounceKicks = false,
 
 		Warnings = true,
@@ -33,6 +34,23 @@ return {
 		Use_HTTPSecret = false,
 		HTTP_Secret_BaseURL = "https://discord.com/api/webhooks/",
 		HTTP_SecretKey = "CHANGE_ME",
+	},
+	
+	Punishments = {
+		["HumanoidCheck"] = "Kick",
+		["MagnitudeCheck"] = "Warn",
+		
+		["Noclip"] = "Kick",
+		["Btools"] = "Kick",
+		["Gui"] = "Log",
+		["Dex"] = "Kick",
+		["AWP"] = "Kick",
+		
+		["Load_Timeout"] = "Log",
+		["Invalid_Token"] = "Kick",
+		["Tamper_Attempt"] = "Kick",
+
+		["Unknown"] = "Kick",
 	},
 	
 	Whitelists = {
