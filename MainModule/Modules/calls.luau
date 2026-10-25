@@ -119,7 +119,17 @@ return function (OspryAC)
 				local Token = Tokens.Get(Plr)
 				
 				--// Debounce
-				-- Request:Debounce(Plr, nil)
+				Request:Debounce(Plr, 1)
+				
+				--// Check Token
+				if Token ~= sentToken then
+					functions.Punish(
+						"Invalid_Token", Plr,
+						"The Server has recieved an invalid Token.",
+						`The Player has sent an invalid Token to the Server during a Punish request`
+					)
+					return
+				end
 
 				--// Send to functions
 				functions.Punish(Detection, Plr, Reason, ModMessage)

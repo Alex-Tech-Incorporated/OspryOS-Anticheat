@@ -6,7 +6,6 @@ return {
 
 	ClientSide = {
 		Load_Timeout = 120,
-		Punish_Timeouts = true,
 		
 		NoclipDetection = true,
 		BtoolsDetection = false,
@@ -21,7 +20,6 @@ return {
 		AlwaysShowReason = {"Load_Timeout"},
 		AnnounceKicks = false,
 
-		Warnings = true,
 		Max_Warns = 3,
 		
 		Strict_Tokens = false,

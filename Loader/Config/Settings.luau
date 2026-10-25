@@ -9,7 +9,6 @@ return {
 	ClientSide = {
 		--// Client Settings
 		Load_Timeout = 120, -- The Time before a Client is counted as "Timed-out" on loading
-		Punish_Timeouts = true, -- Determines if a Player should be kicked if there Client times out
 		
 		--// Basic Detections
 		NoclipDetection = true, -- Attempts to detect Noclip via Raycasting or if the HumanoidRootPart has CanCollide disabled
@@ -29,7 +28,6 @@ return {
 		AnnounceKicks = false, -- Announces if a Player was kicked to everyone in the Server
 		
 		--// Warnings
-		Warnings = true, -- Makes the Anticheat issue warnings instead of kicking a Player directly for certian Detections
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
 		--// Misc
