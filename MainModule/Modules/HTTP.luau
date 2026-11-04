@@ -34,8 +34,8 @@ return function (OspryAC)
 	-- Internal functions (Module dependant) --
 	
 	--// Generates an Embed
-	local function GenerateEmbed(Plr : Player, Color : number, Fields : any)
-		local generatedEmbed = HTTP_Data.GenerateEmbed(Plr, Color, Fields)
+	local function GenerateEmbed(Plr : Player, Action : string, Color : number, Fields : any)
+		local generatedEmbed = HTTP_Data.GenerateEmbed(Plr, Action, Color, Fields)
 		return generatedEmbed
 	end
 	
@@ -60,7 +60,7 @@ return function (OspryAC)
 	end
 	
 	--// Sends a Payload to a Webhook
-	local function SendPayload(Plr : Player, Color : number, Fields : any)
+	local function SendPayload(Plr : Player, Action : string, Color : number, Fields : any)
 		task.spawn(function()
 			--// Embed Payload
 			local Payload = GenerateEmbed(Plr, Color, Fields)
@@ -123,7 +123,7 @@ return function (OspryAC)
 			}
 			
 			--// Send to Webhook
-			SendPayload(Plr, HTTP_Data.WarnColor, Fields)
+			SendPayload(Plr, "Warn", HTTP_Data.WarnColor, Fields)
 		end,
 		
 		--// Sends a Webhook to Staff Members if a Player has been kicked by the Anticheat
@@ -141,7 +141,7 @@ return function (OspryAC)
 			}
 			
 			--// Send to Webhook
-			SendPayload(Plr, HTTP_Data.KickColor, Fields)
+			SendPayload(Plr, "Kick", HTTP_Data.KickColor, Fields)
 		end,
 		
 		--// Sends a Webhook to Staff Memebrs if a Player was Banned by the Anticheat
@@ -159,7 +159,7 @@ return function (OspryAC)
 			}
 			
 			--// Send to Webhook
-			SendPayload(Plr, HTTP_Data.BanColor, Fields)
+			SendPayload(Plr, "Ban", HTTP_Data.BanColor, Fields)
 		end,
 		
 		--// Sends a Log to a Webhook
@@ -194,7 +194,7 @@ return function (OspryAC)
 			OspryAC:debug(`Field Data:`, Fields)
 			
 			--// Send to Webhook
-			SendPayload(nil, Data.HTTP.LogColor, Fields)
+			SendPayload(nil, nil, Data.HTTP.LogColor, Fields)
 		end,
 		
 		

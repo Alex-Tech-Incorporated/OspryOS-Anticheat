@@ -40,11 +40,11 @@ return {
 		LogColor = 3168504,
 		
 		--// Generates an Embed
-		GenerateEmbed = function(Plr : Player, Color : number, Fields : any)
+		GenerateEmbed = function(Plr : Player, Action : string, Color : number, Fields : any)
 			return {
 				embeds = {{
 					title = "OspryOS Anticheat",
-					description = Plr and `@{Plr.Name} ({Plr.UserId})` or `System log`,
+					description = Plr and `@{Plr.Name} ({Plr.UserId})\nAction: {Action}` or `System log`,
 					color = Color,
 					fields = Fields,
 				}}
