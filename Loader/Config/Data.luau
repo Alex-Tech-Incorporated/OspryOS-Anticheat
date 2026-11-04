@@ -36,6 +36,7 @@ return {
 		--// Embed Colors
 		KickColor = 16711680,
 		WarnColor = 16744192,
+		BanColor = 11797508,
 		LogColor = 3168504,
 		
 		--// Generates an Embed

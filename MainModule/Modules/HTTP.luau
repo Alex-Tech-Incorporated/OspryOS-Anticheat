@@ -144,6 +144,24 @@ return function (OspryAC)
 			SendPayload(Plr, HTTP_Data.KickColor, Fields)
 		end,
 		
+		--// Sends a Webhook to Staff Memebrs if a Player was Banned by the Anticheat
+		SendBan = function(Plr : Player, Reason : string, PrivateReason : string)
+			if not HTTP.Enabled then return end
+			
+			--// locals
+			local GameName = GetGameName()
+			
+			--// Embed Fields
+			local Fields = {
+				{ name = "Reason", value = Reason, inline = false },
+				{ name = "Private Reason", value = PrivateReason, inline = false },
+				{ name = "Game", value = GameName, inline = false },
+			}
+			
+			--// Send to Webhook
+			SendPayload(Plr, HTTP_Data.BanColor, Fields)
+		end,
+		
 		--// Sends a Log to a Webhook
 		SendLog = function(...)
 			--// locals

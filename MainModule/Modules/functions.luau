@@ -282,7 +282,7 @@ return function (OspryAC)
 					Duration = Behavior.Ban_Duration,
 					DisplayReason = string.format(Behavior.Ban_Reason, if DisplayReason then Reason else ""),
 					PrivateReason = PrivateReason,
-					ExcludeAltAccounts = false,
+					ExcludeAltAccounts = Behavior.Exclude_Alts,
 				})
 			end)
 			
@@ -295,6 +295,10 @@ return function (OspryAC)
 				OspryAC.functions.Kick(Plr, Reason, PrivateReason, DisplayReason)
 				return
 			end
+			
+			--// Send to Webhook
+			OspryAC.HTTP.SendBan(Plr, Reason, PrivateReason)
+			OspryAC:debug(`Banned {Plr.Name} ({Plr.UserId}).`)
 		end,
 		
 		--// Issues a Warning to a Player
