@@ -14,6 +14,7 @@ return function (OspryAC)
 	local Data = OspryAC.Data
 	
 	local Punishments = Config.Punishments
+	local Behavior = Config.Behavior
 	
 	--// Exported functions
 	return {
@@ -221,6 +222,9 @@ return function (OspryAC)
 				
 			elseif Type == "warn" then
 				OspryAC.functions.Warn(Plr, Reason, ModMessage, showReason)
+			
+			elseif Type == "ban" then
+				OspryAC.functions.Ban(Plr, Reason, ModMessage, showReason)
 				
 			elseif Type == "log" then
 				OspryAC.HTTP.SendLog(
@@ -231,7 +235,7 @@ return function (OspryAC)
 				
 			else
 				OspryAC:warn(`The Server recieved an invalid Punishment type while trying to process the Punishment of {Plr.Name}.`)
-				OspryAC:warn(`Supported Types are, "kick", "warn" and "log".`)
+				OspryAC:warn(`Supported Types are, "kick", "warn", "ban" and "log".`)
 			end
 		end,
 		
@@ -266,6 +270,35 @@ return function (OspryAC)
 				.."\nYou have been presumed to be Exploiting"
 				..if showReason then `\n\n{Reason}` else ""
 			)
+		end,
+		
+		--// Bans a Player using Roblox's Ban API
+		Ban = function(Plr : Player, Reason : string, PrivateReason : string, DisplayReason : boolean)
+			--// Attempt to Ban User
+			local success, result = pcall(function()
+				return Players:BanAsync({
+					UserIds = {Plr.UserId},
+					ApplyToUniverse = true,
+					Duration = Behavior.Ban_Duration,
+					DisplayReason = string.format(Behavior.Ban_Reason, if DisplayReason then Reason else ""),
+					PrivateReason = PrivateReason,
+					ExcludeAltAccounts = Behavior.Exclude_Alts,
+				})
+			end)
+			
+			--// Check Response
+			if not success then
+				OspryAC:warn(`Failed to Ban {Plr.Name} ({Plr.UserId}), falling back...`)
+				OspryAC:warn(result)
+				
+				--// Kick
+				OspryAC.functions.Kick(Plr, Reason, PrivateReason, DisplayReason)
+				return
+			end
+			
+			--// Send to Webhook
+			OspryAC.HTTP.SendBan(Plr, Reason, PrivateReason)
+			OspryAC:debug(`Banned {Plr.Name} ({Plr.UserId}).`)
 		end,
 		
 		--// Issues a Warning to a Player
