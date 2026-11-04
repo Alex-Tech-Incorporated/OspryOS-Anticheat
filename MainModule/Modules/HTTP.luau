@@ -173,8 +173,8 @@ return function (OspryAC)
 				if #Fields >= 24 then break end -- Leaves space for the Game's Name
 				
 				--// Data
-				local Title = Value.title and tostring(Value.title) or `Log {Index}`
-				local Text = Value.log and tostring(Value.log) or tostring(Value)
+				local Title = Value.title ~= nil and tostring(Value.title) or `Log {Index}`
+				local Text = Value.log ~= nil and tostring(Value.log) or tostring(Value)
 				local SameLine = Value.inline == true
 				
 				--// Add Field
