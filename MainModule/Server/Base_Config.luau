@@ -22,6 +22,10 @@ return {
 
 		Max_Warns = 3,
 		
+		Ban_Reason = "You have been Banned for Exploiting. %s",
+		Ban_Duration = -1,
+		Exclude_Alts = false,
+		
 		Strict_Tokens = false,
 		GetReq_RequireToken = false,
 		API = false,

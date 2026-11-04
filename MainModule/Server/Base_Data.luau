@@ -18,19 +18,19 @@ return {
 		IgnoreWaterForCasting = true,
 		NoclipEvaluationVector = Vector3.new(0, -1, 0),
 	},
-	
 	WhitelistedGuis = {},
 	
 	HTTP = {
 		KickColor = 16711680,
 		WarnColor = 16744192,
+		BanColor = 11797508,
 		LogColor = 3168504,
 
-		GenerateEmbed = function(Plr : Player, Color : number, Fields : any)
+		GenerateEmbed = function(Plr : Player, Action : string, Color : number, Fields : any)
 			return {
 				embeds = {{
 					title = "OspryOS Anticheat",
-					description = Plr and `@{Plr.Name} ({Plr.UserId})` or `System log`,
+					description = Plr and `@{Plr.Name} ({Plr.UserId})\nAction: {Action}` or `System log`,
 					color = Color,
 					fields = Fields,
 				}}

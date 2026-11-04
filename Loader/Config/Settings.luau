@@ -30,6 +30,11 @@ return {
 		--// Warnings
 		Max_Warns = 3, -- The maximum amount of Warnings a Player can recieve
 		
+		--// Ban Settings
+		Ban_Reason = "You have been Banned for Exploiting. %s", -- This Reason will be shown to the User. Use "%s" for the reason
+		Ban_Duration = -1, -- The Bans Duration (in seconds), -1 or 0 is Permanent
+		Exclude_Alts = false, -- Should Alternate Accounts be excluded from the Ban?
+		
 		--// Misc
 		Strict_Tokens = false, -- If enabled, Tokens can only be called once by the Client
 		GetReq_RequireToken = true, -- If enabled, most Client Get Requests require the Client to send over the Token
@@ -45,7 +50,7 @@ return {
 	},
 	
 	--// Tells the Anticheat what it should do if a Detection is tripped
-	-- These are all supported types, "Kick", "Warn" and "Log"
+	-- These are all supported types, "Kick", "Warn", "Ban" and "Log"
 	Punishments = {
 		--// Server-Sided detections
 		["HumanoidCheck"] = "Kick",
