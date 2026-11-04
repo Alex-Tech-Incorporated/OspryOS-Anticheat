@@ -63,7 +63,7 @@ return function (OspryAC)
 	local function SendPayload(Plr : Player, Action : string, Color : number, Fields : any)
 		task.spawn(function()
 			--// Embed Payload
-			local Payload = GenerateEmbed(Plr, Color, Fields)
+			local Payload = GenerateEmbed(Plr, Action, Color, Fields)
 			if not Payload then OspryAC:warn(`Embed Generation failed, got: {Payload}`) return end
 
 			local Body = HTTPService:JSONEncode(Payload)
