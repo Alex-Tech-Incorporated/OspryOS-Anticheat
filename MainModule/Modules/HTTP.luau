@@ -145,7 +145,7 @@ return function (OspryAC)
 		end,
 		
 		--// Sends a Webhook to Staff Memebrs if a Player was Banned by the Anticheat
-		SendBan = function(Plr : Player, Reason : string, PrivateReason : string)
+		SendBan = function(Plr : Player, Reason : string, ModMessage : string)
 			if not HTTP.Enabled then return end
 			
 			--// locals
@@ -154,7 +154,7 @@ return function (OspryAC)
 			--// Embed Fields
 			local Fields = {
 				{ name = "Reason", value = Reason, inline = false },
-				{ name = "Private Reason", value = PrivateReason, inline = false },
+				{ name = "Moderator Message", value = ModMessage, inline = false },
 				{ name = "Game", value = GameName, inline = false },
 			}
 			
