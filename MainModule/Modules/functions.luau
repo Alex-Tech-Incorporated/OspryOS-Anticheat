@@ -38,7 +38,7 @@ return function (OspryAC)
 
 					--// WarningPopup Gui Data
 					WarningPopup = {
-						Enabled = Config.Behavior.Warnings,
+						Enabled = true, -- You cannot toggle Warnings anymore, so this is how I solved it.
 						Gui = OspryAC.Client.Guis:WaitForChild("WarningPopup"),
 						Final = "__OsprAC_WarnGui",
 					},
