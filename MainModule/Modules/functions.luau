@@ -131,6 +131,7 @@ return function (OspryAC)
 				
 				--// Clear Data Tables
 				Data.System.Client_Stats[Plr.UserId] = nil
+				OspryAC.Server_Module.Leave_Cleanup(Plr)
 				OspryAC.tokens.Delete(Plr)
 				
 				--// Clear Token if present

@@ -10,7 +10,12 @@ return function (OspryAC)
 	
 	--// Data
 	local Server = {
-		Running_Threads = {}, -- Format: [string] = Thread | RBXScriptConnection
+		--// System
+		Prefixes = {"MagnitudeCheck_", "HumanoidCheck_"},
+		
+		--// Connects and Threads
+		Running_Threads = {}, -- Format: [string (Name)] = Thread | RBXScriptConnection
+		Connected = {}, -- Format: [number (UserId)] = { RBXScriptConnection }
 	}
 	
 	-- Server functions --
@@ -18,28 +23,60 @@ return function (OspryAC)
 	--// Creates a Coroutine and saves it in the Coroutine table
 	function Server:CreateRoutine(Name : string, func)
 		if Server.Running_Threads[Name] then
-			OspryAC:warn(`The Coroutine "{Name}" already exists, the existing Coroutine has been overwritten.`)
+			OspryAC:warn(`The Coroutine "{Name}" already exists, the existing Coroutine has been stopped and replaced.`)
+			Server:Disconnect(Name)
 		end
 
 		--// Create and Resume Coroutine
-		local Thread = coroutine.create(func)
-		local success, result = coroutine.resume(Thread)
+		local Thread = task.spawn(function()
+			local success, result = xpcall(func, debug.traceback)
+			if not success then
+				OspryAC:warn(`Thread "{Name}" errored: {result}`)
+			end
+			
+			--// Remove thread once finished
+			if Server.Running_Threads[Name] == coroutine.running() then
+				Server.Running_Threads[Name] = nil
+			end
+		end)
 
-		--// Check if Coroutine failed
-		if not success then
-			OspryAC:warn(`Failed to create Coroutine "{Name}", got: {result}`)
-			return nil
+		--// Check if the Thread died
+		if coroutine.status(Thread) ~= "dead" then
+			Server.Running_Threads[Name] = Thread
+			OspryAC:debug(`Thread "{Name}" created`)
 		end
-
-		--// Add to Table
-		OspryAC:debug(`Coroutine "{Name}" created?`)
-		Server.Running_Threads[Name] = Thread
 		return Thread
 	end
 	
 	--// Saves a Connection to the Server table
 	function Server:AddConnection(Name : string, Connection : RBXScriptConnection)
+		if Server.Running_Threads[Name] then
+			OspryAC:warn(`The Connection "{Name}" already exists, the existing Connection has been disconnected and replaced.`)
+			Server:Disconnect(Name)
+		end
 		Server.Running_Threads[Name] = Connection
+	end
+	
+	--// Disconnbects or Cancels a thread saved in the Server Table
+	function Server:Disconnect(Name : string)
+		local Entry = Server.Running_Threads[Name]
+		if not Entry then return end
+
+		if typeof(Entry) == "thread" then
+			pcall(task.cancel, Entry)
+		elseif typeof(Entry) == "RBXScriptConnection" then
+			Entry:Disconnect()
+		end
+
+		Server.Running_Threads[Name] = nil
+		OspryAC:debug(`Stopped "{Name}"`)
+	end
+	
+	--// Stops all currently active checks for a Player
+	function Server:StopChecks(UserId : number)
+		for _, Prefix in ipairs(Server.Prefixes) do
+			Server:Disconnect(Prefix..UserId)
+		end
 	end
 	
 	--// Sends Punishment data to functions
@@ -49,70 +86,73 @@ return function (OspryAC)
 	
 	
 	
+	-- Internal functions --
+	
+	--// Starts all Server Checks for a Player
+	local function StartChecks(Plr : Player, Char : Model)
+		Server:StopChecks(Plr.UserId)
+		task.spawn(OspryAC.Server_Module.MagCheck, Plr, Char)
+		task.spawn(OspryAC.Server_Module.HumanoidCheck, Plr, Char)
+	end
+	
+	
+	
 	-- Anticheat functions --
 	return {
 		--// Initialize
 		Init = function()
-			--// Connect New Players
-			Players.PlayerAdded:Connect(function(Plr : Player)
-				--// Connect Character to Checks
-				Plr.CharacterAdded:Connect(function(Char : Model)
-					--// Connect Checks
-					OspryAC.Server_Module.MagCheck(Plr)
-					OspryAC.Server_Module.HumanoidCheck(Plr)
-				end)
+			--// Connect Character to Checks
+			local function ConnectChar(Plr : Player)
+				if Server.Connected[Plr.UserId] then OspryAC:debug(`{Plr.Name} is already connected to checks`) return end
 				
-				--// Cleanup Sequence
-				Plr.CharacterRemoving:Connect(function(Char : Model)
+				--// locals
+				local Connections = {}
+				
+				--// Connect Script Connections
+				table.insert(Connections, Plr.CharacterAdded:Connect(function(Char : Model?)
+					StartChecks(Plr, Char)
+				end))
+				
+				--// Connect Cleanup
+				table.insert(Connections, Plr.CharacterRemoving:Connect(function(Char : Model?)
+					--// Cleanup
 					OspryAC:debug(`Character removing of {Plr.Name}`)
-
-					--// Disconnect Threads and Connections
-					for Name, Thread in pairs(Server.Running_Threads) do
-						if Name:match(Plr.UserId) then
-							OspryAC:debug(Name, typeof(Thread))
-							
-							--// Check type
-							if typeof(Thread) == "thread" then
-								--// Cancel / Remove thread
-								task.cancel(Thread)
-								Server.Running_Threads[Name] = nil
-
-								OspryAC:debug(`Thread "{Name}" cancelled for {Char.Name}`)
-								
-							elseif typeof(Thread) == "RBXScriptConnection" then
-								--// Disconnect and Remove Connection
-								Thread:Disconnect()
-								Server.Running_Threads[Name] = nil
-								
-								OspryAC:debug(`Connection "{Name}" disconnected for {Char.Name}`)
-							end
-						end
-					end
+					Server:StopChecks(Plr.UserId)
 
 					--// Complete
 					OspryAC:debug(`Character cleanup completed for {Char:GetFullName()}`)
-				end)
-			end)
+				end))
+				
+				--// Check if Character already exists
+				if Plr.Character then
+					StartChecks(Plr, Plr.Character)
+				end
+				
+				--// Connected
+				Server.Connected[Plr.UserId] = Connections
+				OspryAC:debug(`Connected {Plr.Name} to Server checks`)
+			end
+			
+			--// Connect New Players
+			Players.PlayerAdded:Connect(ConnectChar)
 			
 			--// Connect Existing Players
-			for _, Plr in pairs(Players:GetPlayers()) do
-				--// Connect Detections
-				OspryAC.Server_Module.MagCheck(Plr)
-				OspryAC.Server_Module.HumanoidCheck(Plr)
+			for _, Plr in ipairs(Players:GetPlayers()) do
+				ConnectChar(Plr)
 			end
-			OspryAC:debug(`Added existing Players`)
+			OspryAC:debug(`Added existing players`)
 			
 			--// Complete
 			OspryAC:debug(`Initialized Server Detections.`)
 		end,
 		
 		--// Magnitude Check
-		MagCheck = function(Plr : Player)
+		MagCheck = function(Plr : Player, RecvChar : Model?)
 			if not Config.ServerSide.MagnitudeChecks then return end
 			
 			--// locals
-			local Char = Plr.Character
-			if not Char then return end
+			local Char = RecvChar or Plr.Character
+			if Plr.Character ~= Char then return end
 			
 			local Humanoid = Char:WaitForChild("Humanoid") :: Humanoid?
 			local RootPart = Char:WaitForChild("HumanoidRootPart") :: BasePart?
@@ -130,30 +170,27 @@ return function (OspryAC)
 					--// locals
 					local Current_Position = RootPart.Position
 					local New_Humanoid_State = Humanoid:GetState()
+					local Distance = (Current_Position - Prev_Position).Magnitude
 
 					--// Check for Rapid Magnitude changes
-					if (Current_Position - Prev_Position).Magnitude >= Data.MagnitudeChecks.Max_Magnitude then
-						--// Compare Whitelisted States with New and Previous State
-						local isWhitelistedState = table.find(
-							Data.HumanoidChecks.WhitelistedStates,
-							New_Humanoid_State.Value
-						)
-						local isPreviousState = table.find(
-							Data.HumanoidChecks.WhitelistedStates,
-							Prev_Humanoid_State.Value
-						)
-						if isWhitelistedState or isPreviousState then return end
+					if Distance < Data.MagnitudeChecks.Max_Magnitude then return end
 
-						--// Ignore if the Player is not in the Air or if the Player died / resetted
-						if Humanoid.FloorMaterial ~= Enum.Material.Air or Humanoid.Health == 0 then return end
-
-						--// Punish
-						Server:Punish(
-							"MagnitudeCheck", Plr,
-							"Abnormal Magnitude changes",
-							`Player has exceeded {Data.MagnitudeChecks.Max_Magnitude} by {tostring(Current_Position.Magnitude)} in {Data.MagnitudeChecks.CheckTime} second(s).`
-						)
+					--// Compare Whitelisted States with New and Previous State
+					local WhitelistedStates = Data.HumanoidChecks.WhitelistedStates
+					if table.find(WhitelistedStates, New_Humanoid_State.Value)
+						or table.find(WhitelistedStates, Prev_Humanoid_State.Value) then
+						return
 					end
+
+					--// Ignore if the Player is not in the Air or if the Player died / reset
+					if Humanoid.FloorMaterial ~= Enum.Material.Air or Humanoid.Health <= 0 then return end
+
+					--// Punish
+					Server:Punish(
+						"MagnitudeCheck", Plr,
+						"Abnormal Magnitude changes",
+						`Player has exceeded {Data.MagnitudeChecks.Max_Magnitude} by {string.format("%.2f", Distance)} in {Data.MagnitudeChecks.CheckTime} second(s).`
+					)
 				end)
 			end
 			
@@ -169,17 +206,22 @@ return function (OspryAC)
 		end,
 		
 		--// Humanoid Check
-		HumanoidCheck = function(Plr : Player)
+		HumanoidCheck = function(Plr : Player, Char : Model?)
 			if not Config.ServerSide.HumanoidChecks then return end
 			
 			--// locals
-			local Char = Plr.Character
-			if not Char then return end
-
-			local Humanoid = Char:WaitForChild("Humanoid") :: Humanoid?
+			local Humanoid = Char:WaitForChild("Humanoid", 5) :: Humanoid?
+			if not Humanoid then
+				OspryAC.warn(`{Char:GetFullName()} has no Humanoid, the check has been skipped.`)
+				return
+			end
+			
+			if Plr.Character ~= Char then return end
 			
 			--// Humanoid Check Connection
 			local StateChanged = Humanoid.StateChanged:Connect(function(PrevState, NewState)
+				if Humanoid.Health <= 0 or NewState == Enum.HumanoidStateType.Dead then return end
+				
 				--// Whitelist Check
 				local isWhitelisted = table.find(
 					Data.HumanoidChecks.WhitelistedStates,
@@ -192,7 +234,7 @@ return function (OspryAC)
 					Server:Punish(
 						"HumanoidCheck", Plr,
 						"Unauthorized Humanoid State",
-						`Humanoid State has switched from {PrevState.Value} to {NewState.Value}`
+						`Humanoid State has switched from {PrevState.Name} ({PrevState.Value}) to {NewState.Name} ({NewState.Value})`
 					)
 				end
 			end)
@@ -202,6 +244,24 @@ return function (OspryAC)
 			
 			--// Complete
 			OspryAC:debug(`Connected HumanoidCheck to {Char:GetFullName()}`)
+		end,
+		
+		--// Clears the Player from the "Connected" Table
+		Leave_Cleanup = function(Plr : Player)
+			--// Stop running checks
+			Server:StopChecks(Plr.UserId)
+			
+			--// Disconnect active connections
+			local Connections = Server.Connected[Plr.UserId]
+			if Connections then
+				for _, Connection in ipairs(Connections) do
+					Connection:Disconnect()
+				end
+				Server.Connected[Plr.UserId] = nil
+			end
+			
+			--// Complete
+			OspryAC:debug(`Server cleanup completed for {Plr.Name}`)
 		end,
 	}
 end
