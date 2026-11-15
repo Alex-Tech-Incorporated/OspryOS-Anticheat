@@ -10,7 +10,8 @@ return function (OspryAC)
 	
 	--// Data
 	local Server = {
-		Running_Threads = {}, -- Format: [string] = Thread | RBXScriptConnection
+		Running_Threads = {}, -- Format: [string (Name)] = Thread | RBXScriptConnection
+		Connected = {}, -- Format: [number (UserId)] = true
 	}
 	
 	-- Server functions --
@@ -53,16 +54,17 @@ return function (OspryAC)
 	return {
 		--// Initialize
 		Init = function()
-			--// Connect New Players
-			Players.PlayerAdded:Connect(function(Plr : Player)
-				--// Connect Character to Checks
-				Plr.CharacterAdded:Connect(function(Char : Model)
-					--// Connect Checks
+			--// Connect Character to Checks
+			local function ConnectChar(Plr : Player)
+				if Server.Connected[Plr.UserId] then OspryAC:debug(`{Plr.Name} is already connected to checks`) return end
+				
+				--// Connect Checks
+				Plr.CharacterAdded:Connect(function()
 					OspryAC.Server_Module.MagCheck(Plr)
 					OspryAC.Server_Module.HumanoidCheck(Plr)
 				end)
 				
-				--// Cleanup Sequence
+				--// Character Cleanup
 				Plr.CharacterRemoving:Connect(function(Char : Model)
 					OspryAC:debug(`Character removing of {Plr.Name}`)
 
@@ -70,7 +72,7 @@ return function (OspryAC)
 					for Name, Thread in pairs(Server.Running_Threads) do
 						if Name:match(Plr.UserId) then
 							OspryAC:debug(Name, typeof(Thread))
-							
+
 							--// Check type
 							if typeof(Thread) == "thread" then
 								--// Cancel / Remove thread
@@ -78,12 +80,12 @@ return function (OspryAC)
 								Server.Running_Threads[Name] = nil
 
 								OspryAC:debug(`Thread "{Name}" cancelled for {Char.Name}`)
-								
+
 							elseif typeof(Thread) == "RBXScriptConnection" then
 								--// Disconnect and Remove Connection
 								Thread:Disconnect()
 								Server.Running_Threads[Name] = nil
-								
+
 								OspryAC:debug(`Connection "{Name}" disconnected for {Char.Name}`)
 							end
 						end
@@ -92,15 +94,20 @@ return function (OspryAC)
 					--// Complete
 					OspryAC:debug(`Character cleanup completed for {Char:GetFullName()}`)
 				end)
-			end)
+				
+				--// Connected
+				Server.Connected[Plr.UserId] = true
+				OspryAC:debug(`Connected {Plr.Name} to Server checks`)
+			end
+			
+			--// Connect New Players
+			Players.PlayerAdded:Connect(ConnectChar)
 			
 			--// Connect Existing Players
 			for _, Plr in pairs(Players:GetPlayers()) do
-				--// Connect Detections
-				OspryAC.Server_Module.MagCheck(Plr)
-				OspryAC.Server_Module.HumanoidCheck(Plr)
+				ConnectChar(Plr)
 			end
-			OspryAC:debug(`Added existing Players`)
+			OspryAC:debug(`Added existing players?`)
 			
 			--// Complete
 			OspryAC:debug(`Initialized Server Detections.`)
@@ -202,6 +209,14 @@ return function (OspryAC)
 			
 			--// Complete
 			OspryAC:debug(`Connected HumanoidCheck to {Char:GetFullName()}`)
+		end,
+		
+		--// Clears the Player from the "Connected" Table
+		Leave_Cleanup = function(Plr : Player)
+			--// locals
+			local Found = Server.Connected[Plr.UserId]
+			if Found then Server.Connected[Plr.UserId] = nil end
+			OspryAC:debug(`Server cleanup completed for {Plr.Name}, result:`, Server.Connected)
 		end,
 	}
 end
