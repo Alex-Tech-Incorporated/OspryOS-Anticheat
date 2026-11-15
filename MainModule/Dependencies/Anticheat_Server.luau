@@ -105,6 +105,14 @@ return function (OspryAC)
 			
 			--// Connect Existing Players
 			for _, Plr in pairs(Players:GetPlayers()) do
+				--// Connect Checks
+				if Plr.Character then
+					if Server.Connected[Plr.UserId] then return end
+					OspryAC.Server_Module.MagCheck(Plr)
+					OspryAC.Server_Module.HumanoidCheck(Plr)
+				end
+				
+				--// Connect
 				ConnectChar(Plr)
 			end
 			OspryAC:debug(`Added existing players?`)
