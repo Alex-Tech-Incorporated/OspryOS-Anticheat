@@ -147,11 +147,11 @@ return function (OspryAC)
 		end,
 		
 		--// Magnitude Check
-		MagCheck = function(Plr : Player, Char : Model?)
+		MagCheck = function(Plr : Player, RecvChar : Model?)
 			if not Config.ServerSide.MagnitudeChecks then return end
 			
 			--// locals
-			local Char = Char or Plr.Character
+			local Char = RecvChar or Plr.Character
 			if Plr.Character ~= Char then return end
 			
 			local Humanoid = Char:WaitForChild("Humanoid") :: Humanoid?
