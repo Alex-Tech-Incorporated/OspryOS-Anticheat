@@ -38,7 +38,7 @@ local Loader = {
 	Data = require(LoaderData),
 	
 	--// Loader Version
-	Version = "3.3.0",
+	Version = "3.3.1",
 }
 
 function Loader:print(...)
