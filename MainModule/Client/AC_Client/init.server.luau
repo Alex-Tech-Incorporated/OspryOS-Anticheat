@@ -53,7 +53,6 @@ local Client = {
 		BtoolsDetection = false,
 		GuiDetection = false,
 		DexDetection = false,
-		AWPDetection = false,
 
 		DebugMode = false,
 	},
