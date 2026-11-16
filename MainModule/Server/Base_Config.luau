@@ -12,7 +12,6 @@ return {
 		GuiDetection = false,
 		
 		DexDetection = false,
-		AWPDetection = false,
 	},
 
 	Behavior = {

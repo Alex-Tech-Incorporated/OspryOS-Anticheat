@@ -17,7 +17,6 @@ return {
 		
 		--// Advanced Client Detections
 		DexDetection = false, -- Please refer to our Documentation for more info on Dex Detection
-		AWPDetection = false, -- A detection methood targetting AWP users, refer to Documentation for more detail
 	},
 	
 	--// Anticheat Behavior
@@ -91,7 +90,7 @@ return {
 	--// Development related
 	Development = {
 		LoadLocally = true, -- Loads a local version of the MainModule, placed in ServerScriptService
-		DebugMode = true, -- Enables special prints and weakens Anticheat Security for debugging
+		DebugMode = false, -- Enables special prints and weakens Anticheat Security for debugging
 		
 		MainModule = 0, -- The ID of the MainModule
 	},
