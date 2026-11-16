@@ -45,7 +45,6 @@ return {
 		["Btools"] = "Kick",
 		["Gui"] = "Log",
 		["Dex"] = "Kick",
-		["AWP"] = "Kick",
 		
 		["Load_Timeout"] = "Log",
 		["Invalid_Token"] = "Kick",

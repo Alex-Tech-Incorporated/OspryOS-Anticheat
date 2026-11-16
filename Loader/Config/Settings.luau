@@ -60,7 +60,6 @@ return {
 		["Btools"] = "Kick",
 		["Gui"] = "Log",
 		["Dex"] = "Kick",
-		["AWP"] = "Kick",
 		
 		--// System
 		["Load_Timeout"] = "Log",
