@@ -263,7 +263,7 @@ return function (Client)
 
 			--// AWP Detections
 			-- Removed, AWP is no more.
-			-- Might replace it for a Vold Detection? Basically AWP just rebranded (with the same flaw)
+			-- Might replace it for a Volt Detection? Basically AWP just rebranded (with the same flaw)
 
 			--// Complete
 			Client:debug(`Detections initialized.`)

@@ -1,5 +1,10 @@
 --// Client Framework
 return function (Client)
+	--// locals
+	--// Utils
+	local getfenv = getfenv()
+	
+	--// functions
 	return {
 		--// RemoteEvents
 		Event = Client.Remotes("OspryAC"),
@@ -88,8 +93,8 @@ return function (Client)
 					script.Parent.Name = game:GetService("HttpService"):GenerateGUID(true)
 					
 					--// Hide Client
-					-- getfenv().script.Parent:Destroy() -- I don't think this messes with anything, going to keep it like this though.
-					getfenv().script.Parent = nil
+					-- getfenv().script.Parent.Parent:Destroy() -- I don't think this messes with anything, going to keep it like this though.
+					getfenv.script.Parent.Parent = nil
 				end
 
 				--// Create Proxy
