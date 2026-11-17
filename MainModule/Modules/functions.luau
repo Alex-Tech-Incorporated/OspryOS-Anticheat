@@ -89,8 +89,9 @@ return function (OspryAC)
 						if v > maxping then maxping = v end
 						avgping += v
 					end
-
-					avgping /= #entries
+					if #entries > 0 then
+						avgping /= #entries
+					end
 
 					LoopRunning = false
 				end)
