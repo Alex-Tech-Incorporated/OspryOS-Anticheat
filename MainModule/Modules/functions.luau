@@ -73,8 +73,10 @@ return function (OspryAC)
 						if Accumulated >= UpdateRate then
 							Accumulated -= UpdateRate
 							--Update logic
+							local Ping = Plr:GetNetworkPing()
+							if Ping < 0 then continue end
 
-							table.insert(entries, Plr:GetNetworkPing())
+							table.insert(entries, Ping)
 						end
 
 						Accumulated += task.wait()
