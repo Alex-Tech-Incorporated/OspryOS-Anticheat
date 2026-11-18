@@ -67,6 +67,10 @@ local Client = {
 		Announcement = false,
 		Warning = false,
 	},
+	Logs = {
+		Reg = {},
+		Debug = {},
+	},
 	-- Mappings = Mappings,
 	Loaded = false,
 }
@@ -84,8 +88,17 @@ Client.ModuleLoad_Order = {
 
 --// Prints
 function Client:debug(...)
+	table.insert(Client.Logs.Debug, select(2, pcall(table.concat, {"[Debug]: ", ...})))
 	if not Client.Config.DebugMode then return end
 	warn("[OspryAC Client] Debug:", ...)
+end
+
+--// Logging
+function Client:log(Prefix : string, ...)
+	table.insert(
+		Client.Logs.Reg,
+		select(2, pcall(table.concat, {`[{Prefix}]: ` or "", ...}))
+	)
 end
 
 

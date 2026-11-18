@@ -158,6 +158,12 @@ return function (Client)
 			Ping = function()
 				return "Pong!"
 			end,
+			
+			--// Returns all log tables
+			Logs = function(Index : string)
+				local Logs = Client.Logs[Index] or Client.Logs
+				return Logs
+			end,
 		},
 	}
 end
