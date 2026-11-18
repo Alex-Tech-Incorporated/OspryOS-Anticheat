@@ -119,7 +119,7 @@ return function (OspryAC)
 				local Token = Tokens.Get(Plr)
 				
 				--// Debounce
-				Request:Debounce(Plr, 1)
+				Request:Debounce(Plr, 1) -- Is this thing not debouncing?
 				
 				--// Check Token
 				if Token ~= sentToken then
@@ -235,7 +235,6 @@ return function (OspryAC)
 					GuiDetection = Config.ClientSide.GuiDetection,
 
 					DexDetection = Config.ClientSide.DexDetection,
-					AWPDetection = Config.ClientSide.AWPDetection,
 
 					--// Development
 					DebugMode = Config.Development.DebugMode,

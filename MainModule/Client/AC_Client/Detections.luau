@@ -234,6 +234,7 @@ return function (Client)
 					local Chat = game:GetService("Chat")
 					Instance.new("BoolValue", Chat).Name = name -- make it and forget about it
 					--if someone ever deletes this value with code injection then they have a free way to bypass this whole detection ;-;
+					-- We should localise this and add a detection if its deleted 
 
 					Client:debug("Game loaded, Dex Detection loop running.")
 
@@ -261,47 +262,8 @@ return function (Client)
 			end
 
 			--// AWP Detections
-			if Client.Config.AWPDetection then
-				coroutine.wrap(function()
-					if RunService:IsStudio() then Client:debug("AWP Detection cannot be used in Studio.") return end
-
-					--// locals
-					local getfenv = getfenv
-					local tick = tick
-
-					--// Check
-					local violations = 0
-					while task.wait(0.2) do
-						local t1 = tick()
-						for i = 1, 1e4 do
-							getfenv()
-						end
-						local t2 = tick()
-						for i = 1, 1e4 do
-							-- do nothing lol
-						end
-						local t3 = tick()
-						local ratio = (t2-t1)/(t3-t2)
-						if ratio > 25 then
-							-- dont punish lag spikes, require 8 fails in a row
-							violations = violations + 1
-							if violations >= 8 then
-								Client:Punish(
-									"AWP",
-									"AWP Injection detected",
-									`AWP has been detected with decent confidence (r8: {ratio}).`
-								)
-								Client:debug("AWP Detection loop killed.")
-								break
-							end
-						else
-							violations = 0
-						end
-					end
-
-					Client:debug("AWP Detection loop running")
-				end)()
-			end
+			-- Removed, AWP is no more.
+			-- Might replace it for a Volt Detection? Basically AWP just rebranded (with the same flaw)
 
 			--// Complete
 			Client:debug(`Detections initialized.`)
